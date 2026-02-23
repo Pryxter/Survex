@@ -1,0 +1,13 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="675" fill="#0F172A"/>
+  <rect x="48" y="48" width="1104" height="579" rx="28" fill="url(#bg)"/>
+  <circle cx="224" cy="336" r="112" fill="rgba(255,255,255,0.24)"/>
+  <rect x="372" y="262" width="510" height="148" rx="20" fill="rgba(15,23,42,0.62)"/>
+  <text x="500" y="354" fill="#E2E8F0" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="700">BitLabs</text>
+  <defs>
+    <linearGradient id="bg" x1="90" y1="70" x2="1120" y2="640" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#06B6D4"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
+    </linearGradient>
+  </defs>
+</svg>
