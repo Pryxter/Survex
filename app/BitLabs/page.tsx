@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import DashboardNavbar from "../components/dashboard-navbar";
 import { getApiBaseUrl } from "../components/api-base";
 
-type TheoremSurvey = {
+type BitLabsSurvey = {
   id: string;
   name: string;
   reward: string;
@@ -15,15 +15,17 @@ type TheoremSurvey = {
 };
 
 type SurveysResponse = {
-  source: "theoremreach" | "demo";
-  surveys: TheoremSurvey[];
+  source: "bitlabs" | "demo";
+  surveys: BitLabsSurvey[];
+  message?: string;
 };
 
-export default function TheoremReachPage() {
+export default function BitLabsPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [source, setSource] = useState<"theoremreach" | "demo" | null>(null);
-  const [surveys, setSurveys] = useState<TheoremSurvey[]>([]);
+  const [source, setSource] = useState<"bitlabs" | "demo" | null>(null);
+  const [surveys, setSurveys] = useState<BitLabsSurvey[]>([]);
+  const [infoMessage, setInfoMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const embeddedSurvey = surveys.find((survey) => Boolean(survey.entryUrl));
 
@@ -47,14 +49,13 @@ export default function TheoremReachPage() {
 
     const apiBaseUrl = getApiBaseUrl();
 
-    fetch(`${apiBaseUrl}/api/theoremreach/surveys`, {
+    fetch(`${apiBaseUrl}/api/bitlabs/surveys`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
       .then(async (response) => {
         const data = (await response.json()) as SurveysResponse & {
-          message?: string;
           details?: string;
         };
 
@@ -64,6 +65,7 @@ export default function TheoremReachPage() {
 
         setSource(data.source || "demo");
         setSurveys(Array.isArray(data.surveys) ? data.surveys : []);
+        setInfoMessage(String(data.message || "").trim());
       })
       .catch((error) => {
         setErrorMessage(toUiErrorMessage(error.message || "Failed to load surveys."));
@@ -80,7 +82,7 @@ export default function TheoremReachPage() {
 
         <section className="mt-8 rounded-3xl border border-white/10 bg-slate-900/80 p-6 md:p-8">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-200">
-            TheoremReach
+            BitLabs
           </p>
           <h1 className="mt-2 text-3xl font-extrabold md:text-4xl">
             Available Surveys
@@ -92,8 +94,14 @@ export default function TheoremReachPage() {
 
           {source === "demo" && !errorMessage ? (
             <p className="mt-4 rounded-xl border border-amber-300/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-200">
-              Demo mode active. Configure TheoremReach API credentials in backend
-              env to load live surveys.
+              Demo mode active. Configure BitLabs API credentials in backend env
+              to load live surveys.
+            </p>
+          ) : null}
+
+          {infoMessage ? (
+            <p className="mt-4 rounded-xl border border-cyan-300/30 bg-cyan-400/10 px-4 py-3 text-sm text-cyan-200">
+              {infoMessage}
             </p>
           ) : null}
 
@@ -111,7 +119,7 @@ export default function TheoremReachPage() {
                 <div className="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/60">
                   <iframe
                     src={embeddedSurvey.entryUrl}
-                    title="TheoremReach Surveys"
+                    title="BitLabs Surveys"
                     className="h-[78vh] w-full"
                     allow="clipboard-read; clipboard-write"
                   />

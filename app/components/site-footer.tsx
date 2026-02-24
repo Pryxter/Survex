@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 const socialLinks = [
-  { name: "Facebook", short: "f" },
-  { name: "Instagram", short: "ig" },
-  { name: "YouTube", short: "yt" },
-  { name: "TikTok", short: "tt" },
+  { name: "Facebook", short: "/Facebook.svg" },
+  { name: "Instagram", short: "/Instagram.svg" },
+  { name: "YouTube", short: "/Youtube.svg" },
+  { name: "TikTok", short: "/TikTok.svg" },
 ];
 
 type SiteFooterProps = {
@@ -43,7 +43,8 @@ export default function SiteFooter({ className = "" }: SiteFooterProps) {
             aria-label={social.name}
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-[11px] font-bold uppercase text-slate-200 hover:border-cyan-300/60 hover:text-cyan-200"
           >
-            {social.short}
+            {/* {social.short} */}
+            <img src={social.short} alt="" />
           </a>
         ))}
       </div>

@@ -139,25 +139,27 @@ export default function Home() {
                   Learn More
                 </a>
               </div>
-              <div className="mt-10 grid grid-cols-3 gap-4 text-left">
+              <div className="mt-10 grid grid-cols-1 gap-4 text-left">
                 <div>
-                  <p className="text-2xl font-extrabold text-cyan-300">2M+</p>
+                  <p className="text-2xl font-extrabold text-cyan-300">
+                    Surveys available worldwide.
+                  </p>
                   <p className="text-xs uppercase tracking-wide text-slate-400">
-                    Registered Users
+                    Trusted survey partners • Secure payouts • U.S. focused
                   </p>
                 </div>
-                <div>
+                {/* <div>
                   <p className="text-2xl font-extrabold text-cyan-300">70+</p>
                   <p className="text-xs uppercase tracking-wide text-slate-400">
                     Countries
                   </p>
-                </div>
-                <div>
+                </div> */}
+                {/* <div>
                   <p className="text-2xl font-extrabold text-cyan-300">$1M+</p>
                   <p className="text-xs uppercase tracking-wide text-slate-400">
                     Rewards Sent
                   </p>
-                </div>
+                </div> */}
               </div>
             </div>
 

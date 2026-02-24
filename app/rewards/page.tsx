@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import DashboardNavbar from "../components/dashboard-navbar";
 import SiteFooter from "../components/site-footer";
+import { getApiBaseUrl } from "../components/api-base";
 
 const rewardOptions = [
   "Amazon Gift Card",
@@ -60,7 +61,7 @@ export default function RewardsPage() {
       return;
     }
 
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    const apiBaseUrl = getApiBaseUrl();
     fetch(`${apiBaseUrl}/api/auth/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -107,7 +108,7 @@ export default function RewardsPage() {
     setStatusMessage("");
 
     try {
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const apiBaseUrl = getApiBaseUrl();
       const response = await fetch(`${apiBaseUrl}/api/rewards/redeem`, {
         method: "POST",
         headers: {

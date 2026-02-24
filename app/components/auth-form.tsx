@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { getApiBaseUrl } from "./api-base";
 
 declare global {
   interface Window {
@@ -200,7 +201,7 @@ export default function AuthForm({
       }
     }
 
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    const apiBaseUrl = getApiBaseUrl();
     const endpoint =
       mode === "signup" ? "/api/auth/register" : "/api/auth/login";
 

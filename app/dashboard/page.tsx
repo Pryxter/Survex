@@ -19,16 +19,6 @@ const surveyWalls = [
     image: "/survey-walls/theoremreach.svg",
     alt: "TheoremReach visual",
   },
-  {
-    name: "Dynata",
-    image: "/survey-walls/dynata.svg",
-    alt: "Dynata visual",
-  },
-  {
-    name: "CINT",
-    image: "/survey-walls/cint.svg",
-    alt: "CINT visual",
-  },
 ];
 
 export default function DashboardPage() {
@@ -59,10 +49,10 @@ export default function DashboardPage() {
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {surveyWalls.map((wall) => (
-                wall.name === "TheoremReach" ? (
+                wall.name === "TheoremReach" || wall.name === "BitLabs" ? (
                   <Link
                     key={wall.name}
-                    href="/TheoremReach"
+                    href={wall.name === "BitLabs" ? "/BitLabs" : "/TheoremReach"}
                     className="rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:border-cyan-300/60"
                   >
                     <div className="overflow-hidden rounded-xl border border-white/10 bg-slate-800/70">

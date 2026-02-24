@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import DashboardNavbar from "../components/dashboard-navbar";
 import SiteFooter from "../components/site-footer";
+import { getApiBaseUrl } from "../components/api-base";
 
 type ProfileResponse = {
   profile?: {
@@ -20,7 +21,7 @@ type ProfileResponse = {
     created_at: string;
   };
   surveyHistory?: Array<{
-    id: number;
+    id: string | number;
     survey_id: string;
     transaction_id: string;
     reward: string | number;
@@ -34,6 +35,7 @@ type ProfileResponse = {
     reward_method: string;
     amount: string | number;
     status: string;
+    payout_reference?: string;
     created_at: string;
   }>;
   message?: string;
@@ -67,7 +69,7 @@ export default function ProfilePage() {
       return;
     }
 
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    const apiBaseUrl = getApiBaseUrl();
     fetch(`${apiBaseUrl}/api/profile`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -280,6 +282,11 @@ export default function ProfilePage() {
                         <span className="rounded-full bg-cyan-500/20 px-2 py-1 text-xs font-bold text-cyan-300">
                           {item.status}
                         </span>
+                        {item.payout_reference ? (
+                          <p className="mt-1 text-xs text-emerald-300">
+                            Code/Tx: {item.payout_reference}
+                          </p>
+                        ) : null}
                       </td>
                       <td className="py-3 pr-3">{formatDate(item.created_at)}</td>
                     </tr>
