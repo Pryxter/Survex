@@ -190,7 +190,9 @@ export default function RewardsPage() {
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <p className="text-sm text-slate-300">
                 Selected reward:{" "}
-                <span className="font-semibold text-white">{selectedReward}</span>
+                <span className="font-semibold text-white">
+                  {selectedReward}
+                </span>
               </p>
             </div>
 
@@ -238,14 +240,17 @@ export default function RewardsPage() {
                 >
                   <div className="overflow-hidden rounded-xl border border-white/10 bg-slate-800/70">
                     <Image
-                      src="/rewards/reward-reference.svg"
+                      // src="/rewards/amazon.svg"
+                      src={`/rewards/${reward}.svg`}
                       alt={`${reward} reference`}
                       width={640}
                       height={360}
                       className="h-24 w-full object-cover"
                     />
                   </div>
-                  <p className="mt-3 text-center text-base font-bold">{reward}</p>
+                  <p className="mt-3 text-center text-base font-bold">
+                    {reward}
+                  </p>
                 </button>
               );
             })}
@@ -261,7 +266,8 @@ export default function RewardsPage() {
             <h2 className="text-xl font-bold">Confirm withdrawal</h2>
             <p className="mt-3 text-sm text-slate-300">
               Are you sure you want to withdraw{" "}
-              <span className="font-bold text-white">${selectedAmount}</span> using{" "}
+              <span className="font-bold text-white">${selectedAmount}</span>{" "}
+              using{" "}
               <span className="font-bold text-white">{selectedReward}</span>?
             </p>
 

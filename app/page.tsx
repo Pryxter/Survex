@@ -236,7 +236,7 @@ export default function Home() {
               </ul>
             </div>
 
-            <div className="rounded-3xl border border-white/15 bg-white/5 p-6">
+            {/* <div className="rounded-3xl border border-white/15 bg-white/5 p-6">
               <p className="text-sm font-semibold text-cyan-200">
                 Community Feedback
               </p>
@@ -255,7 +255,7 @@ export default function Home() {
                   </blockquote>
                 ))}
               </div>
-            </div>
+            </div> */}
           </div>
         </section>
 
