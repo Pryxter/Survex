@@ -1,4 +1,3 @@
-import Link from "next/link";
 import SiteFooter from "../components/site-footer";
 import type { Metadata } from "next";
 
@@ -14,12 +13,12 @@ export default function TermsPage() {
           <h1 className="text-3xl font-extrabold md:text-4xl">
             Terms and Conditions
           </h1>
-          <Link
+          {/* <Link
             href="/signup"
             className="rounded-full border border-cyan-300/50 px-4 py-2 text-sm font-semibold text-cyan-300 hover:bg-cyan-300/10"
           >
             Back to Sign Up
-          </Link>
+          </Link> */}
         </div>
 
         <p className="text-sm text-slate-300">
@@ -57,27 +56,29 @@ export default function TermsPage() {
 
           <section>
             <h2 className="mb-2 text-lg font-bold text-white">
-              2. Account Eligibility
+              2. Account Eligibility and Registration
             </h2>
             <p>
-              You must provide accurate information and maintain only one
-              account per person/device unless explicitly authorized. At Survex,
-              we prohibit anyone under the age of thirteen (13) years, or the
-              minimum age applicable in your jurisdiction, from using our
-              services. If we receive notification that you are under 13 years
-              of age (or the minimum age applicable in your jurisdiction) or do
-              not meet the age requirement of the law, we will terminate your
-              access to the Survex Sites, Features, and Services, deactivate
-              your account, and delete your data. Some offers on the Survex
-              website, Features, and Services, as well as some of our Services,
-              may also be subject to additional age restrictions or parental
-              consent requirements. By using the Survex Sites, Features, or
-              Services, you confirm, represent, and warrant that you are able to
-              enter into a binding contract with the Company. It is not subject
-              to the prohibitions described in the Users section. It agrees to
-              comply with these Terms (including the Additional Terms) and with
-              all applicable local, state, national, and international laws,
-              rules, and regulations.
+              To register and participate in Survex, you must: Be at least
+              eighteen (18) years of age or the age of majority in your
+              jurisdiction, whichever is higher. Provide accurate, current, and
+              complete registration information. Maintain only one (1) account
+              per individual, household, device, and IP address, unless
+              expressly authorized in writing by Survex. Survex strictly
+              prohibits: Multiple accounts. Account sharing. Use of VPNs,
+              proxies, residential RDPs, emulators, virtual machines, or any
+              technology designed to mask identity or location. Use of automated
+              scripts, bots, AI tools, or software to manipulate surveys or
+              offers. We reserve the right, at our sole and absolute discretion,
+              to verify your identity at any time, including requesting
+              identification documents, proof of residence, or additional
+              verification measures. If we determine that you have provided
+              false information, misrepresented your identity, manipulated
+              eligibility criteria, or violated these Terms, we may immediately
+              suspend or permanently terminate your account without prior notice
+              and without liability. Survex may use automated decision-making
+              systems, fraud scoring mechanisms, and behavioral analysis tools
+              to evaluate account risk and enforce these Terms.
             </p>
           </section>
 
@@ -122,35 +123,44 @@ export default function TermsPage() {
               anyone, or acting in a belligerent or offensive manner. Malicious
               Software: Uploading or transmitting files containing viruses,
               Trojans, worms, time bombs, corrupted data, or any software that
-              may damage the operation of our Services or other users'
+              may damage the operation of our Services or other users&apos;
               computers. Rights Infringement: Violating contractual, personal,
-              intellectual property, or other rights (ours or third parties'),
-              including infringing on trademarks, copyrights, or patents.
-              Phishing: Attempting to obtain Account information, passwords, or
-              private info from other members. Support Abuse: Misusing support
-              channels to file false reports, claiming rewards you are not
-              entitled to, or communicating with customer service in a
-              disrespectful or offensive manner. Fraudulent Evidence: Creating
+              intellectual property, or other rights (ours or third
+              parties&apos;), including infringing on trademarks, copyrights, or
+              patents. Phishing: Attempting to obtain Account information,
+              passwords, or private info from other members. Support Abuse:
+              Misusing support channels to file false reports, claiming rewards
+              you are not entitled to, or communicating with customer service in
+              a disrespectful or offensive manner. Fraudulent Evidence: Creating
               or distributing altered or false images/documents to claim
-              Rewards. Automation & Cheats: Developing or using "automated"
-              software, macros, web crawlers, scripts, or "cheat utilities" in
-              connection with the Services. Survey Manipulation: Sharing survey
-              IDs, answers, or confidential survey information, or assisting
-              others in meeting survey requirements. Artificial Activity:
-              Performing offers in an artificial or "rigged" way that does not
-              reflect organic human use. This includes using botnets, click
-              farms, unauthorized AI/chatbots, or excessive searching to inflate
-              Rewards. Exploiting Errors: Publicly reporting or exploiting any
-              "Bug" or error that provides an unintended advantage or violates
-              laws. If you find an error, you must notify our support team. If
-              we determine, at our sole and absolute discretion, that you have
+              Rewards. Automation & Cheats: Developing or using
+              &quot;automated&quot; software, macros, web crawlers, scripts, or
+              &quot;cheat utilities&quot; in connection with the Services.
+              Survey Manipulation: Sharing survey IDs, answers, or confidential
+              survey information, or assisting others in meeting survey
+              requirements. Artificial Activity: Performing offers in an
+              artificial or &quot;rigged&quot; way that does not reflect organic
+              human use. This includes using botnets, click farms, unauthorized
+              AI/chatbots, or excessive searching to inflate Rewards. Exploiting
+              Errors: Publicly reporting or exploiting any &quot;Bug&quot; or
+              error that provides an unintended advantage or violates laws. If
+              you find an error, you must notify our support team. If we
+              determine, at our sole and absolute discretion, that you have
               violated these Terms, we may issue a warning before canceling or
               suspending your Account. However, you acknowledge that we are not
               required to provide a warning or notice before termination, which
               we may do at any time and for any reason. If your Account is
               canceled or suspended, you agree not to attempt to rejoin or
               create a new Account in any of our Rewards Programs without our
-              prior written authorization.
+              prior written authorization. Immediate Termination and Forfeiture:
+              If Survex determines, at its sole discretion, that you have
+              engaged in fraudulent activity, abuse of surveys, artificial
+              participation, identity manipulation, or violation of any partner
+              requirements, Survex may immediately terminate your account,
+              withhold pending rewards, reverse previously credited rewards, and
+              permanently ban you from future participation. No compensation
+              will be provided for forfeited rewards resulting from violations
+              of these Terms.
             </p>
           </section>
 
@@ -159,73 +169,78 @@ export default function TermsPage() {
               4. Rewards and Balance
             </h2>
             <p>
-              In connection with your use of Survex, you may have the
-              opportunity to accumulate rewards, incentives, and entries into
-              sweepstakes. Incentives may be points or Panel Currency. This
-              currency has no monetary value and cannot be redeemed for cash; it
-              cannot be auctioned, traded, bartered, or sold, and it is
-              non-transferable upon death, as a gift, within the framework of
-              domestic relations matters, or by any other means, except by
-              operation of law. Information, official rules, and terms and
-              conditions for rewards, incentives, and sweepstakes may be
-              available in these Terms, on a Panel Website, at the beginning or
-              end of a survey, in survey invitations, or on the website(s) or
-              webpages designated for redeeming rewards, incentives, and prizes.
-              The various types of incentives and rewards that Survex may offer
-              are intended to encourage Panel participation and do not
-              constitute compensation for time spent. Points or Panel Currency
-              earned, or any reward redeemed for participating in Research or
-              other Panel activities, are not calculated based on time spent.
-              Likewise, any consideration paid or points earned for
-              participation are not prorated hourly or in any other manner. All
-              points in a Panel member's account expire one (1) year after
-              deposit, unless they are forfeited or canceled earlier due to
-              membership or account inactivity, or as otherwise set forth in
-              these Terms. Panel member accounts are not actual bank or
-              financial accounts and do not accrue interest of any kind. Points
-              or Panel Currency posted in connection with the
-              Applications/Services do not constitute the property of the Panel
-              member, cannot be transferred during or after the member's
-              lifetime (by operation of law or otherwise), and have no value
-              until the member submits them for redemption in accordance with
-              these Terms. If points, Panel Currency, or incentives are posted
-              to an account by error, Survex may remove them. If they are
-              obtained through fraudulent means, Survex will remove them, and
-              the account may be suspended and/or terminated. Redemption Points
-              or Panel Currency will be deducted from the member's account at
-              the time the redemption request is made. All redemptions are
-              final. Rewards may not be returned for credit unless otherwise
-              provided in these Terms or agreed upon in writing by an authorized
-              Survex representative. The minimum redemption threshold required
-              to redeem a reward is the equivalent of twenty US dollars (USD
-              20). Unless a lower redemption option exists, you cannot redeem
-              rewards if you do not reach this limit. Survex reserves the right
-              to offer reward options with lower minimum thresholds without
-              prior notice or consent. Survex may modify, alter, delete, or add
-              new terms to its rewards program or Applications/Services at any
-              time and without prior notice. This includes changing point
-              values, redemption levels, conversion rates, and membership
-              conditions. Survex also reserves the right to terminate or cease
-              offering any incentive or reward at any time. You may not combine
-              your points or Panel Currency with those of any other member,
-              including family or friends. Survex makes no representations or
-              warranties, express or implied, regarding any product or service
-              received through the program, including warranties of
-              merchantability or fitness for a particular purpose. Survex is not
-              liable for the performance or failure of any product or service
-              redeemed, nor for any costs, damages, accidents, injuries, or
-              losses arising from their use. Survex will not replace lost,
-              stolen, or damaged rewards. Members should review their accounts
-              to ensure points are correctly identified. If you believe there is
-              an error, email Support@survex.app with your name, email, and
-              specific details. Survex’s decision is final and binding.
-              Third-party providers or websites involved in redemptions may have
-              their own terms and conditions; please review them carefully. By
-              accepting these Terms, you consent to the collection, processing,
-              and disclosure of your personal information for the purposes of
-              the rewards program, subject to the Survex Privacy Policy. Your
-              daily redemption limit is restricted to two (2) redemptions per
-              24-hour period.
+              In connection with your participation in Survex, you may have the
+              opportunity to accumulate rewards, incentives, points, entries
+              into sweepstakes, or other promotional benefits (collectively,
+              “Rewards”). Rewards may be issued in the form of points or Panel
+              Currency. Panel Currency and points have no cash value, are not
+              legal tender, are non-transferable, and may not be sold, traded,
+              auctioned, bartered, assigned, or gifted. Rewards do not
+              constitute property, wages, salary, compensation, or any form of
+              employment payment. Participation in Survex activities is
+              voluntary and incentives are provided solely to encourage
+              engagement. Points or Panel Currency are not calculated based on
+              time spent and are not prorated hourly or otherwise. Survex makes
+              no guarantee that any specific survey, offer, or activity will be
+              available at any time. All points credited to a member’s account
+              expire one (1) year after deposit unless forfeited earlier due to
+              inactivity, account suspension, violation of these Terms, fraud
+              investigation, or program termination. Accounts are not financial
+              accounts and do not accrue interest. Rewards only acquire value
+              upon successful redemption in accordance with these Terms. If
+              points, Panel Currency, or Rewards are credited in error, Survex
+              reserves the right to remove them without notice. If Rewards are
+              obtained through fraudulent, deceptive, artificial, automated, or
+              unauthorized means, Survex may remove such Rewards and suspend or
+              permanently terminate the associated account. Fraud Review and
+              Payment Holds Survex reserves the right to place temporary holds
+              on rewards, withdrawals, or redemption requests for fraud review,
+              identity verification, partner validation, compliance checks, or
+              chargeback investigation. Processing times may vary depending on
+              third-party partner confirmation procedures. Survex may delay,
+              reverse, adjust, or cancel Rewards if: A partner reports invalid,
+              duplicate, or fraudulent participation. Survey qualification
+              criteria were manipulated. VPN, proxy, emulator, AI automation, or
+              identity masking tools were detected. Chargebacks, disputes, or
+              reversed transactions occur. Suspicious activity is identified
+              during internal review. Survex is not responsible for delays
+              caused by partner review processes. Redemption Terms Redemption
+              requests will deduct the corresponding points at the time the
+              request is submitted. All redemptions are final once processed and
+              may not be reversed except at Survex’s sole discretion. The
+              minimum redemption threshold is twenty US dollars (USD $20),
+              unless a lower threshold option is offered at Survex’s discretion.
+              Members may not combine, pool, or transfer Rewards between
+              accounts, including family members or other individuals. Daily
+              redemption is limited to two (2) redemptions per 24-hour period.
+              Survex reserves the right to modify, suspend, restrict, or
+              terminate any Reward program, redemption option, conversion rate,
+              or eligibility requirement at any time without prior notice.
+              Forfeiture of Rewards If an account is suspended, terminated, or
+              found to be in violation of these Terms, all pending, unused, or
+              unredeemed Rewards may be forfeited without compensation. In the
+              event of account closure initiated by the user, any unredeemed
+              Rewards may be forfeited. Survex’s decisions regarding reward
+              eligibility, validation, and forfeiture are final and binding.
+              Third-Party Rewards Disclaimer Certain Rewards may be fulfilled by
+              third-party providers. Survex makes no representations or
+              warranties regarding third-party products or services, including
+              merchantability, fitness for a particular purpose, quality,
+              availability, or delivery. Survex is not responsible for: Lost,
+              stolen, delayed, or damaged rewards. Errors made by third-party
+              reward providers. Taxes imposed by any authority. Technical
+              failures affecting redemption. Members are responsible for
+              reviewing any applicable third-party terms. Limitation on
+              Liability for Rewards In no event shall Survex’s total liability
+              relating to Rewards exceed the total amount of Rewards redeemed by
+              you in the six (6) months preceding the claim. Chargeback
+              Responsibility If Survex incurs losses, penalties, partner
+              clawbacks, processing fees, or administrative costs resulting from
+              a chargeback, payment dispute, reversed transaction, fraudulent
+              activity, or violation of partner requirements attributable to
+              your account, you agree that Survex may recover such amounts by
+              deducting from your Rewards balance or pursuing recovery through
+              lawful means.
             </p>
           </section>
 
@@ -302,8 +317,8 @@ export default function TermsPage() {
               paying the cost of supplying the products or services (or
               equivalent products or services) or repairing or paying the cost
               of repairing the products or re-performing the services, at the
-              Company's sole discretion. Please note that we may, at any time
-              and at our sole and absolute discretion, terminate our legal
+              Company&apos;s sole discretion. Please note that we may, at any
+              time and at our sole and absolute discretion, terminate our legal
               agreement with you and deprive you of continued use of the Survex
               Sites and features and our Services and, without limiting the
               foregoing, we may do so if required by law (for example, where the
@@ -316,10 +331,69 @@ export default function TermsPage() {
               is no longer commercially viable.
             </p>
           </section>
+          <section>
+            <h2 className="mb-2 text-lg font-bold text-white">
+              7. Independent Contractor Status
+            </h2>
+            <p>
+              Participation in Survex surveys, reward programs, or research
+              activities does not create any employment, partnership, agency, or
+              joint venture relationship between you and Survex. Rewards,
+              points, or incentives are not wages, salary, or compensation for
+              employment, and participation is entirely voluntary.
+            </p>
+          </section>
+          <section>
+            <h2 className="mb-2 text-lg font-bold text-white">
+              8. Governing Law and Dispute Resolution
+            </h2>
+            <p>
+              These Terms shall be governed by and construed in accordance with
+              the laws of the State of Illinois, United States, without regard
+              to conflict of law principles. Any dispute, claim, or controversy
+              arising out of or relating to these Terms or the use of Survex
+              Services shall be resolved exclusively through binding arbitration
+              conducted in Illinois, except that either party may bring claims
+              in small claims court if eligible. By agreeing to these Terms, you
+              waive your right to participate in class actions or class-wide
+              arbitration.
+            </p>
+          </section>
 
           <section>
             <h2 className="mb-2 text-lg font-bold text-white">
-              6. Changes to Terms
+              9. Indemnification
+            </h2>
+            <p>
+              You agree to defend, indemnify, and hold harmless Survex, its
+              affiliates, partners, officers, directors, employees, contractors,
+              and agents from and against any and all claims, damages,
+              obligations, losses, liabilities, costs, or debt, and expenses
+              (including reasonable attorneys’ fees) arising from: Your use of
+              the Survex Sites or Services; Your violation of these Terms; Your
+              fraudulent activity or abuse of Rewards Programs; Your violation
+              of any third-party rights, including survey partners; Any
+              chargeback, payment dispute, or reversal caused by your actions.
+              Survex reserves the right to assume exclusive defense and control
+              of any matter subject to indemnification.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="mb-2 text-lg font-bold text-white">
+              10. Severability
+            </h2>
+            <p>
+              If any provision of these Terms is held to be unlawful, void, or
+              unenforceable, that provision shall be deemed severable and shall
+              not affect the validity and enforceability of the remaining
+              provisions.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="mb-2 text-lg font-bold text-white">
+              11. Changes to Terms
             </h2>
             <p>
               We reserve the right to modify these Terms from time to time, at

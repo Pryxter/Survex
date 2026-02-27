@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const socialLinks = [
   { name: "Facebook", short: "/Facebook.svg" },
@@ -32,6 +33,10 @@ export default function SiteFooter({ className = "" }: SiteFooterProps) {
           <Link href="/Terms" className="text-slate-300 hover:text-cyan-200">
             Terms and Conditions
           </Link>
+          <span className="text-slate-600">|</span>
+          <p className="text-slate-300 hover:text-cyan-200">
+            Support@survex.app
+          </p>
         </div>
       </div>
 
@@ -43,8 +48,13 @@ export default function SiteFooter({ className = "" }: SiteFooterProps) {
             aria-label={social.name}
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-[11px] font-bold uppercase text-slate-200 hover:border-cyan-300/60 hover:text-cyan-200"
           >
-            {/* {social.short} */}
-            <img src={social.short} alt="" />
+            <Image
+              src={social.short}
+              alt=""
+              width={18}
+              height={18}
+              className="h-[18px] w-[18px]"
+            />
           </a>
         ))}
       </div>

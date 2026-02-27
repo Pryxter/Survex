@@ -31,27 +31,6 @@ const perks = [
   "Friendly support team that answers quickly",
 ];
 
-const testimonials = [
-  {
-    quote:
-      "I requested my first voucher at lunch and received it the same day. Super smooth.",
-    name: "Monica R.",
-    location: "Spain",
-  },
-  {
-    quote:
-      "The surveys are short, clear, and actually interesting. Great way to earn extra money online.",
-    name: "Daniel M.",
-    location: "United States",
-  },
-  {
-    quote:
-      "I have tried many survey panels, but this one is faster with support and redemptions.",
-    name: "Valentina C.",
-    location: "Italy",
-  },
-];
-
 const faqs = [
   {
     question: "How much can I earn?",
@@ -66,7 +45,7 @@ const faqs = [
   {
     question: "How often will I receive surveys?",
     answer:
-      "Invitations are sent regularly by email. Frequency depends on active studies and your profile match.",
+      "Surveys and offers are available directly through our Offer Wall. Availability depends on active campaigns and how well your profile matches advertiser requirements. New opportunities may appear at any time, so we recommend checking the Offer Wall regularly.",
   },
 ];
 

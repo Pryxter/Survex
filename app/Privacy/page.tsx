@@ -1,4 +1,3 @@
-import Link from "next/link";
 import SiteFooter from "../components/site-footer";
 import type { Metadata } from "next";
 
@@ -14,12 +13,12 @@ export default function PrivacyPage() {
           <h1 className="text-3xl font-extrabold md:text-4xl">
             Privacy Policy
           </h1>
-          <Link
+          {/* <Link
             href="/signup"
             className="rounded-full border border-cyan-300/50 px-4 py-2 text-sm font-semibold text-cyan-300 hover:bg-cyan-300/10"
           >
             Back to Sign Up
-          </Link>
+          </Link> */}
         </div>
 
         <p className="text-sm text-slate-300">
@@ -53,7 +52,7 @@ export default function PrivacyPage() {
               identifiers, and security keys, necessary for the administration
               and protection of your account. Transaction History: Detailed
               records of purchases, commercial operations, or any economic
-              transaction carried out by the user through Survex's digital
+              transaction carried out by the user through Survex&apos;s digital
               ecosystems. Corporate Communications: Information contained in
               inquiries, incident reports, or suggestions that the user directs
               to our support channels, in order to resolve concerns and improve
@@ -72,7 +71,19 @@ export default function PrivacyPage() {
               tracking technologies are employed, such as cookies, web beacons,
               and other similar mechanisms. These allow for the automated
               capture of technical data, including browser type, mobile device
-              specifications, IP address, and the operating system used.
+              specifications, IP address, and the operating system used. Fraud
+              Prevention and Technical Monitoring: Survex automatically collects
+              technical and behavioral data for fraud prevention purposes. This
+              includes, but is not limited to, IP address history, device
+              identifiers, browser fingerprinting data, geolocation signals,
+              proxy/VPN detection data, and activity logs. This information is
+              used to detect duplicate accounts, unauthorized access, automated
+              activity, identity misrepresentation, or violations of our Terms
+              of Use. Users acknowledge and agree that such monitoring is
+              essential to protect the integrity of the platform and its reward
+              programs. Such data may be used to create internal risk scores and
+              fraud detection profiles to protect the integrity of Survex and
+              its partners.
             </p>
           </section>
 
@@ -93,7 +104,7 @@ export default function PrivacyPage() {
               offer a personalized experience for every user. Identification and
               Security: To recognize visitors to our sites and maintain the
               overall security of the platform. Market Research: To conduct
-              internal studies on our users' demographics and behavioral
+              internal studies on our users&apos; demographics and behavioral
               patterns. Strategic Communications: To send you news, updates, or
               information of interest regarding our services and those of
               strategic partners (such as brands or researchers), provided you
@@ -125,9 +136,17 @@ export default function PrivacyPage() {
               purposes or sharing it with third parties (typically via a
               checkbox at the time of registration on Survex). Opt-out Option:
               If you wish to stop receiving communications, you may use the
-              "unsubscribe" link provided in our emails. Exercise of Rights: You
-              may revoke your consent or manage your preferences at any time by
-              contacting our team through our support service.
+              &quot;unsubscribe&quot; link provided in our emails. Exercise of
+              Rights: You may revoke your consent or manage your preferences at
+              any time by contacting our team through our support service. Fraud
+              Detection and Account Integrity: We use collected information to
+              detect, investigate, prevent, and take action against fraudulent
+              activity, abuse of reward systems, false profile information, use
+              of VPNs, proxies, emulators, or any technology intended to
+              manipulate eligibility, geographic qualification, or survey
+              outcomes. Survex reserves the right to withhold rewards, suspend
+              accounts, or permanently terminate participation if suspicious or
+              fraudulent activity is detected.
             </p>
           </section>
 
@@ -142,27 +161,43 @@ export default function PrivacyPage() {
               to prospective partners, advertisers, strategic sponsors, and
               other reputable third parties, as well as for further legitimate
               legal purposes. These data sets are strictly anonymized and do not
-              contain any personally identifiable information. Furthermore,
-              Survex may grant access to your Personal Data to its affiliates,
-              agents, or specialized contractors who assist in the operational
-              delivery of Services through Survex Sites and Features. This
-              network of service providers includes, but is not limited to,
-              entities responsible for transaction processing, order fulfillment
-              and referral visualization, communication and marketing
-              management, data analytics, professional consultancy, IT support,
-              cybersecurity, and cloud storage solutions. These third-party
-              processors are contractually bound to utilize your Personal Data
-              solely to the extent necessary to perform their specific functions
-              on behalf of the company. In the event of a corporate
-              reorganization, merger, acquisition, or the sale of all or a
-              portion of company assets, the Personal Data held by Survex may be
-              transferred to the reorganized entity or the acquiring third party
-              as part of the business transition. Finally, Survex may disclose
-              your Personal Information if mandated by law or if such action is
-              deemed fundamentally necessary to prevent fraud or cybercrime, to
-              uphold the integrity of Survex Sites and Features, or to safeguard
-              the rights, property, and personal safety of the company, its
-              users, or any third party
+              contain any personally identifiable information. Survex may grant
+              access to your Personal Data to its affiliates, agents, or
+              specialized contractors who assist in the operational delivery of
+              Services through Survex Sites and Features. This network of
+              service providers includes, but is not limited to, entities
+              responsible for transaction processing, reward fulfillment,
+              referral tracking, communication and marketing management, data
+              analytics, professional consultancy, IT support, cybersecurity,
+              fraud detection, identity verification, and cloud storage
+              solutions. These third-party processors are contractually bound to
+              utilize your Personal Data solely to the extent necessary to
+              perform their specific functions on behalf of Survex and are
+              required to maintain confidentiality and appropriate security
+              measures. Fraud and Compliance Disclosure: Survex may share
+              relevant user data with survey providers, offerwall partners,
+              reward partners, fraud detection services, compliance monitoring
+              vendors, and identity verification providers for the sole purpose
+              of verifying eligibility, preventing fraud, enforcing platform
+              integrity, detecting duplicate or suspicious accounts,
+              investigating misuse of VPNs, proxies, emulators, automated
+              scripts, or other circumvention technologies, resolving disputes
+              related to incentives or rewards, and complying with legal or
+              contractual obligations. Such disclosures are limited to what is
+              reasonably necessary for these purposes. In the event of a
+              corporate reorganization, merger, acquisition, restructuring, or
+              the sale of all or a portion of Survex’s assets, Personal Data
+              held by Survex may be transferred to the reorganized entity or
+              acquiring third party as part of the business transition, subject
+              to applicable data protection laws. Finally, Survex may disclose
+              your Personal Information if required to do so by law, court
+              order, regulatory authority, or governmental request, or if such
+              action is reasonably necessary to: prevent fraud, abuse, or
+              cybercrime; protect the integrity and security of Survex Sites and
+              Features; enforce our Terms of Use or Reward Policies; respond to
+              claims, disputes, or chargebacks; safeguard the rights, property,
+              and personal safety of Survex, its users, partners, or any third
+              party.
             </p>
           </section>
 
@@ -191,62 +226,97 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="mb-2 text-lg font-bold text-white">
-              5. Your Choices
+              5. Your Rights and Choices
             </h2>
             <p>
-              You may have the following rights with respect to your Personal
-              Data, which apply differently in different circumstances and in
-              different territories: right of access, right to rectification,
-              right to erasure, right to restriction of processing, right to
-              data portability, and the right to object to processing and to be
-              informed. Please see below for a brief description of each of
-              these rights. Access: Upon request, you may be entitled to confirm
-              that we process your Personal Data and to a copy of your Personal
-              Data. Rectification: If the Personal Data we hold about you is
-              incorrect, you may have the right for it to be rectified. Erasure:
-              You can request us to erase your Personal Data when there is no
-              compelling reason for us to continue processing it, if we rely on
-              your consent for the processing of your Personal Data and you
-              withdraw your consent, we rely on legitimate interests for the
-              processing and there are no overriding legitimate interests to
-              continue the processing, we have to erase the information to
-              comply with a legal obligation or we have processed the
-              information unlawfully. Please note that if you exercise this
-              right, we may necessarily have to close your account and your
-              participation in any of our Rewards Programs, as we would be
-              unable to continue to offer you our Services. Restriction: You may
-              request a restriction on the processing we undertake on your
-              Personal Data. This right will only apply if you contest the
-              accuracy of your Personal Data and we are verifying the accuracy
-              of the data, the Personal Data has been unlawfully processed and
-              you oppose erasure and request restriction instead, or we no
-              longer need the Personal Data, but you need us to keep it in order
-              to establish, exercise or defend a legal claim. Objection: You may
-              object to our processing of your Data if our processing is carried
-              out based on our legitimate interests. Please note, however, that
-              should we determine that our interests are so compelling as to
-              override your objection we may continue to process your Personal
-              Data. Portability: You may have the right to receive some of your
-              Personal Data in machine readable format. This right extends to
-              you being able to request that such data is sent to a third-party
-              controller. Withdrawing consent: If the legal basis we rely on to
-              process your Personal Data is consent you have the right to
-              withdraw this consent. File a complaint: You can also file a
-              complaint with the data protection authorities of your place of
-              residence. If you wish to exercise any of these rights, please
-              submit your requests by completing the online.
+              Depending on your jurisdiction, you may have the following rights
+              regarding your Personal Data: Right of Access: You may request
+              confirmation that we process your Personal Data and obtain a copy.
+              Right to Rectification: You may request correction of inaccurate
+              or incomplete data. Right to Erasure: You may request deletion
+              where legally applicable. However, Survex may retain certain
+              information for fraud prevention, legal compliance, tax
+              obligations, dispute resolution, chargeback defense, and
+              enforcement of our Terms. If you request deletion, your account
+              will be permanently closed and pending or unused rewards may be
+              forfeited. Right to Restrict Processing: You may request
+              limitation of processing under certain legal circumstances. Right
+              to Object: You may object to processing based on legitimate
+              interests, subject to our overriding legal grounds. Right to Data
+              Portability: Where applicable, you may request your Personal Data
+              in machine-readable format. Right to Withdraw Consent: Where
+              processing is based on consent, you may withdraw it at any time.
+              California Privacy Rights (CCPA/CPRA): If you are a California
+              resident, you may have the right to request disclosure of
+              categories of Personal Information collected, request deletion,
+              and request correction. Survex does not sell Personal Information
+              for monetary compensation. However, certain data sharing
+              activities may qualify as “sharing” under California law. You may
+              exercise your rights by contacting Support@survex.app . We may
+              require identity verification before processing requests.
+            </p>
+          </section>
+          <section>
+            <h2 className="mb-2 text-lg font-bold text-white">
+              7. Data Retention
+            </h2>
+            <p>
+              Survex retains Personal Data for as long as necessary to: Provide
+              Services; Maintain operational records; Prevent fraud and abuse;
+              Investigate suspicious activity; Resolve disputes and chargebacks;
+              Comply with tax, accounting, and regulatory obligations; Enforce
+              our Terms and Conditions. Retention periods vary depending on the
+              nature of the data and legal requirements. Even after account
+              closure or deletion requests, certain information may be retained
+              where necessary for legitimate business or legal purposes,
+              including fraud prevention databases.
+            </p>
+          </section>
+          <section>
+            <h2 className="mb-2 text-lg font-bold text-white">
+              8. Eligibility and Minimum Age
+            </h2>
+            <p>
+              Survex Services are intended only for individuals who are at least
+              18 years old (or the age of majority in their jurisdiction). By
+              registering, you represent and warrant that you meet the minimum
+              age requirement. Survex does not knowingly collect Personal Data
+              from minors. If we become aware of such collection, we reserve the
+              right to terminate the account and delete the associated data.
+            </p>
+          </section>
+          <section>
+            <h2 className="mb-2 text-lg font-bold text-white">
+              9. International Data Transfers
+            </h2>
+            <p>
+              Survex may transfer, store, and process your Personal Data in
+              countries other than your country of residence. By using our
+              Services, you consent to such transfers, subject to appropriate
+              safeguards and compliance with applicable data protection laws.
             </p>
           </section>
 
           <section>
-            <h2 className="mb-2 text-lg font-bold text-white">6. Contact</h2>
+            <h2 className="mb-2 text-lg font-bold text-white">10. Contact</h2>
             <p>
-              If you have any questions or concerns regarding this International
-              Notice or your use of the Survex Sites and Features or our
-              Services, please contact us via “Contact Us,” “Contact Us Member
-              Services,” “Support,” or a similar contact link in the footer of
-              the Survex Sites, or email us at: Support@survex.app. Attention:
-              Customer Service.
+              If you have any questions, concerns, or requests regarding this
+              Privacy Policy, your Personal Data, or your use of the Survex
+              Sites and Features, you may contact us through the “Contact Us,”
+              “Member Services,” or “Support” link available in the footer of
+              the Survex Sites, or by emailing us at: Support@survex.app
+              Attention: Customer Service If you wish to exercise any of your
+              data protection rights, including access, rectification, erasure,
+              restriction, objection, portability, or withdrawal of consent,
+              please submit your request via our Support channel. For security
+              and fraud prevention purposes, Survex may require identity
+              verification before processing any request related to Personal
+              Data. Survex reserves the right to decline or delay requests that
+              are incomplete, unverifiable, repetitive, excessive, or that may
+              compromise the security, integrity, or lawful operation of the
+              platform. We will respond to legitimate requests within a
+              reasonable timeframe in accordance with applicable data protection
+              laws.
             </p>
           </section>
         </div>

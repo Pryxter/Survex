@@ -132,7 +132,9 @@ export default function RewardsPage() {
         localStorage.setItem("survex_user", JSON.stringify(data.user));
       }
       setIsConfirmOpen(false);
-      setStatusMessage("Withdrawal request submitted successfully.");
+      setStatusMessage(
+        "Withdrawal request submitted successfully. Your reward will be delivered within 3–5 business days.",
+      );
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : "Withdrawal failed.",
@@ -241,7 +243,7 @@ export default function RewardsPage() {
                   <div className="overflow-hidden rounded-xl border border-white/10 bg-slate-800/70">
                     <Image
                       // src="/rewards/amazon.svg"
-                      src={`/rewards/${reward}.svg`}
+                      src={`/rewards/${reward}.png`}
                       alt={`${reward} reference`}
                       width={640}
                       height={360}

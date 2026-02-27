@@ -26,7 +26,7 @@ type ProfileResponse = {
     transaction_id: string;
     reward: string | number;
     status_raw: string;
-    outcome: "Completed" | "Disqualified" | "Reversed" | string;
+    outcome: "Completed" | "Disqualified" | "Reversed" | "Reconciliation" | string;
     source: string;
     created_at: string;
   }>;
@@ -226,26 +226,48 @@ export default function ProfilePage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {surveyHistory.map((item) => (
-                    <tr key={item.id} className="border-b border-white/5">
-                      <td className="py-3 pr-3">{item.survey_id || "-"}</td>
-                      <td className="py-3 pr-3">
-                        <span
-                          className={`rounded-full px-2 py-1 text-xs font-bold ${
-                            item.outcome === "Completed"
-                              ? "bg-emerald-500/20 text-emerald-300"
-                              : item.outcome === "Reversed"
-                                ? "bg-amber-500/20 text-amber-300"
-                                : "bg-rose-500/20 text-rose-300"
-                          }`}
-                        >
-                          {item.outcome}
-                        </span>
-                      </td>
-                      <td className="py-3 pr-3">$ {Number(item.reward || 0).toFixed(2)}</td>
-                      <td className="py-3 pr-3">{formatDate(item.created_at)}</td>
-                    </tr>
-                  ))}
+                  {surveyHistory.map((item) => {
+                    const normalizedStatusRaw = String(item.status_raw || "")
+                      .trim()
+                      .toLowerCase();
+                    const isReconciliation = normalizedStatusRaw.includes(
+                      "reconciliation",
+                    );
+                    const providerLabel =
+                      String(item.source || "").toLowerCase() === "bitlabs"
+                        ? "BitLabs"
+                        : "TheoremReach";
+                    const statusLabel = isReconciliation
+                      ? "Reconciliation"
+                      : item.outcome;
+
+                    return (
+                      <tr key={item.id} className="border-b border-white/5">
+                        <td className="py-3 pr-3">
+                          {providerLabel} - {item.survey_id || "-"}
+                        </td>
+                        <td className="py-3 pr-3">
+                          <span
+                            className={`rounded-full px-2 py-1 text-xs font-bold ${
+                              isReconciliation
+                                ? "bg-rose-500/20 text-rose-300"
+                                : item.outcome === "Completed"
+                                  ? "bg-emerald-500/20 text-emerald-300"
+                                  : item.outcome === "Reversed"
+                                    ? "bg-amber-500/20 text-amber-300"
+                                    : "bg-rose-500/20 text-rose-300"
+                            }`}
+                          >
+                            {statusLabel}
+                          </span>
+                        </td>
+                        <td className="py-3 pr-3">
+                          $ {Number(item.reward || 0).toFixed(2)}
+                        </td>
+                        <td className="py-3 pr-3">{formatDate(item.created_at)}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
