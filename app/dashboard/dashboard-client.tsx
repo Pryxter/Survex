@@ -22,7 +22,9 @@ const surveyWalls = [
 
 export default function DashboardClient() {
   const router = useRouter();
-  const hasSession = Boolean(localStorage.getItem("survex_token"));
+  const hasSession =
+    typeof window !== "undefined" &&
+    Boolean(window.localStorage.getItem("survex_token"));
 
   useEffect(() => {
     if (!hasSession) {
