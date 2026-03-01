@@ -147,12 +147,18 @@ export default function Home() {
                 Popular Rewards
               </p>
               <div className="grid grid-cols-2 gap-3">
-                {["Amazon", "PayPal", "Visa", "Bank"].map((reward) => (
+                {[
+                  "Amazon Gift Card",
+                  "PayPal Cash",
+                  "Visa Prepaid",
+                  "Bank Transfer",
+                ].map((reward) => (
                   <div
                     key={reward}
                     className="rounded-2xl border border-white/10 bg-slate-900/70 px-4 py-6 text-center text-sm font-semibold"
                   >
-                    {reward}
+                    <img src={"/rewards/" + reward + ".png"} alt={reward} />
+                    {/* {reward} */}
                   </div>
                 ))}
               </div>

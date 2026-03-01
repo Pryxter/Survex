@@ -17,6 +17,9 @@ export const metadata: Metadata = {
     default: "Survex - Home",
     template: "Survex - %s",
   },
+  icons: {
+    icon: "/favicon.svg",
+  },
   description: "Survex paid surveys and rewards platform.",
 };
 
