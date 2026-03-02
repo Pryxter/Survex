@@ -105,13 +105,13 @@ export default function CookiesPage() {
               functionality of Survex Services. Survex does not sell personal
               information obtained through cookies in exchange for monetary
               compensation. However, certain data sharing activities may qualify
-              as &quot;sharing&quot; under California law for cross-context behavioral
-              advertising. If you are a California resident and wish to exercise
-              your right to opt-out of the “sale” or “sharing” of Personal
-              Information as defined under California law, you may submit a
-              request by contacting Support@survex.app with the subject line “Do
-              Not Sell or Share Request.” We will process verified requests in
-              accordance with applicable law.
+              as &quot;sharing&quot; under California law for cross-context
+              behavioral advertising. If you are a California resident and wish
+              to exercise your right to opt-out of the “sale” or “sharing” of
+              Personal Information as defined under California law, you may
+              submit a request by contacting Support@survex.app with the subject
+              line “Do Not Sell or Share Request.” We will process verified
+              requests in accordance with applicable law.
             </p>
           </section>
 

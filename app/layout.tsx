@@ -20,7 +20,13 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.svg",
   },
-  description: "Survex paid surveys and rewards platform.",
+  verification: {
+    other: {
+      "websitelaunches-verification": "2420a2c581723599df78560443178c44",
+    },
+  },
+  description:
+    "Survex is a rewards platform where users earn gift cards by completing offerwall tasks and surveys.",
 };
 
 export default function RootLayout({
