@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Survex - Home",
+    default: "Survex – Earn Gift Cards with Surveys & Offerwalls",
     template: "Survex - %s",
   },
   icons: {
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     },
   },
   description:
-    "Survex is a rewards platform where users earn gift cards by completing offerwall tasks and surveys.",
+    "Survex is a rewards platform where users earn gift cards by completing surveys and offerwall tasks. We partner with trusted providers to offer fast payouts, secure tracking, and a seamless earning experience.",
 };
 
 export default function RootLayout({
