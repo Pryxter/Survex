@@ -1,17 +1,12 @@
-export default function sitemap() {
-  return [
-    {
-      url: "https://survex.app",
-      lastModified: new Date().toISOString(),
-    },
-    {
-      url: "https://survex.app/login",
-      lastModified: new Date().toISOString(),
-    },
-    ,
-    {
-      url: "https://survex.app/signup",
-      lastModified: new Date().toISOString(),
-    },
-  ];
+import type { MetadataRoute } from "next";
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const baseUrl = "https://survex.app";
+
+  const routes = ["/", "/terms", "/privacy"];
+
+  return routes.filter(Boolean).map((path) => ({
+    url: `${baseUrl}${path}`,
+    lastModified: new Date(),
+  }));
 }
