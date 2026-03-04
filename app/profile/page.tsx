@@ -17,6 +17,13 @@ type ProfileResponse = {
     zip_code: string;
     age: number | null;
     gender: string;
+    signup_country_code: string;
+    signup_state: string;
+    signup_city: string;
+    last_login_country_code: string;
+    last_login_state: string;
+    last_login_city: string;
+    last_login_at: string | null;
     balance: string | number;
     created_at: string;
   };
@@ -185,6 +192,36 @@ export default function ProfilePage() {
               <div className="rounded-xl border border-white/10 bg-white/5 p-4">
                 <p className="text-xs uppercase tracking-wide text-slate-400">Gender</p>
                 <p className="mt-1 font-semibold">{profileData.gender || "-"}</p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                <p className="text-xs uppercase tracking-wide text-slate-400">
+                  Signup Country
+                </p>
+                <p className="mt-1 font-semibold">
+                  {profileData.signup_country_code || "-"}
+                </p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                <p className="text-xs uppercase tracking-wide text-slate-400">
+                  Signup State
+                </p>
+                <p className="mt-1 font-semibold">{profileData.signup_state || "-"}</p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                <p className="text-xs uppercase tracking-wide text-slate-400">
+                  Signup City
+                </p>
+                <p className="mt-1 font-semibold">{profileData.signup_city || "-"}</p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-white/5 p-4 sm:col-span-2 lg:col-span-3">
+                <p className="text-xs uppercase tracking-wide text-slate-400">
+                  Last Login At
+                </p>
+                <p className="mt-1 font-semibold">
+                  {profileData.last_login_at
+                    ? formatDate(profileData.last_login_at)
+                    : "-"}
+                </p>
               </div>
               <div className="rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-4">
                 <p className="text-xs uppercase tracking-wide text-emerald-300">

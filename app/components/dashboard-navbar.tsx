@@ -22,43 +22,8 @@ export default function DashboardNavbar({
   balanceOverride,
 }: DashboardNavbarProps) {
   const router = useRouter();
-  const [balance, setBalance] = useState(() => {
-    if (typeof window === "undefined") {
-      return "0.00";
-    }
-
-    const storedUserRaw = localStorage.getItem("survex_user");
-    if (!storedUserRaw) {
-      return "0.00";
-    }
-
-    try {
-      const parsedUser = JSON.parse(storedUserRaw) as StoredUser;
-      if (parsedUser.balance === undefined) {
-        return "0.00";
-      }
-      return Number(parsedUser.balance).toFixed(2);
-    } catch {
-      return "0.00";
-    }
-  });
-  const [userRole, setUserRole] = useState(() => {
-    if (typeof window === "undefined") {
-      return "user";
-    }
-
-    const storedUserRaw = localStorage.getItem("survex_user");
-    if (!storedUserRaw) {
-      return "user";
-    }
-
-    try {
-      const parsedUser = JSON.parse(storedUserRaw) as StoredUser;
-      return String(parsedUser.user_role || "user").toLowerCase();
-    } catch {
-      return "user";
-    }
-  });
+  const [balance, setBalance] = useState("0.00");
+  const [userRole, setUserRole] = useState("user");
 
   const baseItemClass =
     "rounded-xl border px-4 py-2 text-sm font-semibold transition-colors";
@@ -79,6 +44,21 @@ export default function DashboardNavbar({
   useEffect(() => {
     const token = localStorage.getItem("survex_token");
     const apiBaseUrl = getApiBaseUrl();
+    const storedUserRaw = localStorage.getItem("survex_user");
+
+    if (storedUserRaw) {
+      try {
+        const parsedUser = JSON.parse(storedUserRaw) as StoredUser;
+        const nextBalance = Number(parsedUser.balance || 0).toFixed(2);
+        const nextRole = String(parsedUser.user_role || "user").toLowerCase();
+        Promise.resolve().then(() => {
+          setBalance(nextBalance);
+          setUserRole(nextRole);
+        });
+      } catch {
+        // Ignore invalid local storage shape.
+      }
+    }
 
     if (!token) {
       return;

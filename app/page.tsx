@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import SiteFooter from "./components/site-footer";
 import type { Metadata } from "next";
 
@@ -157,7 +158,13 @@ export default function Home() {
                     key={reward}
                     className="rounded-2xl border border-white/10 bg-slate-900/70 px-4 py-6 text-center text-sm font-semibold"
                   >
-                    <img src={"/rewards/" + reward + ".png"} alt={reward} />
+                    <Image
+                      src={`/rewards/${reward}.png`}
+                      alt={reward}
+                      width={220}
+                      height={120}
+                      className="mx-auto h-auto w-full max-w-[170px]"
+                    />
                     {/* {reward} */}
                   </div>
                 ))}

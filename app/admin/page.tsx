@@ -17,7 +17,13 @@ type AdminUser = {
   banned_at: string | null;
   banned_reason: string | null;
   signup_ip: string | null;
+  signup_country_code: string | null;
+  signup_state: string | null;
+  signup_city: string | null;
   last_login_ip: string | null;
+  last_login_country_code: string | null;
+  last_login_state: string | null;
+  last_login_city: string | null;
   last_login_at: string | null;
   created_at: string;
 };
@@ -44,10 +50,22 @@ type AdminTicket = {
   created_at: string;
 };
 
+type AdminLoginEvent = {
+  id: number;
+  user_id: number;
+  user_email: string | null;
+  login_ip: string | null;
+  country_code: string | null;
+  state: string | null;
+  city: string | null;
+  created_at: string;
+};
+
 type AdminOverviewResponse = {
   users?: AdminUser[];
   withdrawals?: AdminWithdrawal[];
   tickets?: AdminTicket[];
+  loginEvents?: AdminLoginEvent[];
   message?: string;
 };
 
@@ -77,6 +95,7 @@ export default function AdminPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [withdrawals, setWithdrawals] = useState<AdminWithdrawal[]>([]);
   const [tickets, setTickets] = useState<AdminTicket[]>([]);
+  const [loginEvents, setLoginEvents] = useState<AdminLoginEvent[]>([]);
 
   const counts = useMemo(
     () => ({
@@ -84,8 +103,9 @@ export default function AdminPage() {
       banned: users.filter((user) => user.is_banned).length,
       withdrawals: withdrawals.length,
       tickets: tickets.length,
+      loginEvents: loginEvents.length,
     }),
-    [users, withdrawals, tickets],
+    [users, withdrawals, tickets, loginEvents],
   );
 
   useEffect(() => {
@@ -112,6 +132,7 @@ export default function AdminPage() {
         setUsers(Array.isArray(data.users) ? data.users : []);
         setWithdrawals(Array.isArray(data.withdrawals) ? data.withdrawals : []);
         setTickets(Array.isArray(data.tickets) ? data.tickets : []);
+        setLoginEvents(Array.isArray(data.loginEvents) ? data.loginEvents : []);
       })
       .catch((error) => {
         setErrorMessage(
@@ -356,7 +377,7 @@ export default function AdminPage() {
             suspicious accounts.
           </p>
 
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             <div className="rounded-xl border border-white/10 bg-white/5 p-4">
               <p className="text-xs uppercase tracking-wide text-slate-400">Users</p>
               <p className="mt-1 text-2xl font-black">{counts.users}</p>
@@ -376,6 +397,12 @@ export default function AdminPage() {
             <div className="rounded-xl border border-white/10 bg-white/5 p-4">
               <p className="text-xs uppercase tracking-wide text-slate-400">Tickets</p>
               <p className="mt-1 text-2xl font-black">{counts.tickets}</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <p className="text-xs uppercase tracking-wide text-slate-400">
+                Login Events
+              </p>
+              <p className="mt-1 text-2xl font-black">{counts.loginEvents}</p>
             </div>
           </div>
 
@@ -402,7 +429,7 @@ export default function AdminPage() {
             <p className="mt-4 text-sm text-slate-400">No users found.</p>
           ) : (
             <div className="mt-4 overflow-x-auto">
-              <table className="w-full min-w-[1200px] border-collapse text-left text-sm">
+              <table className="w-full min-w-[1700px] border-collapse text-left text-sm">
                 <thead>
                   <tr className="border-b border-white/10 text-slate-400">
                     <th className="py-3 pr-3 font-semibold">ID</th>
@@ -412,7 +439,13 @@ export default function AdminPage() {
                     <th className="py-3 pr-3 font-semibold">Balance</th>
                     <th className="py-3 pr-3 font-semibold">Status</th>
                     <th className="py-3 pr-3 font-semibold">Signup IP</th>
+                    <th className="py-3 pr-3 font-semibold">Signup Country</th>
+                    <th className="py-3 pr-3 font-semibold">Signup State</th>
+                    <th className="py-3 pr-3 font-semibold">Signup City</th>
                     <th className="py-3 pr-3 font-semibold">Last Login IP</th>
+                    <th className="py-3 pr-3 font-semibold">Last Login Country</th>
+                    <th className="py-3 pr-3 font-semibold">Last Login State</th>
+                    <th className="py-3 pr-3 font-semibold">Last Login City</th>
                     <th className="py-3 pr-3 font-semibold">Created</th>
                     <th className="py-3 pr-3 font-semibold">Action</th>
                   </tr>
@@ -445,12 +478,18 @@ export default function AdminPage() {
                           )}
                         </td>
                         <td className="py-3 pr-3">{user.signup_ip || "-"}</td>
+                        <td className="py-3 pr-3">{user.signup_country_code || "-"}</td>
+                        <td className="py-3 pr-3">{user.signup_state || "-"}</td>
+                        <td className="py-3 pr-3">{user.signup_city || "-"}</td>
                         <td className="py-3 pr-3">
                           {user.last_login_ip || "-"}
                           <div className="text-xs text-slate-400">
                             {formatDate(user.last_login_at)}
                           </div>
                         </td>
+                        <td className="py-3 pr-3">{user.last_login_country_code || "-"}</td>
+                        <td className="py-3 pr-3">{user.last_login_state || "-"}</td>
+                        <td className="py-3 pr-3">{user.last_login_city || "-"}</td>
                         <td className="py-3 pr-3">{formatDate(user.created_at)}</td>
                         <td className="py-3 pr-3">
                           <button
@@ -545,6 +584,47 @@ export default function AdminPage() {
                           <span className="text-xs text-slate-500">No actions</span>
                         )}
                       </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+
+        <section className="mt-8 rounded-3xl border border-white/10 bg-slate-900/80 p-6 md:p-8">
+          <h2 className="text-2xl font-extrabold">Recent Login Events</h2>
+          {loginEvents.length === 0 ? (
+            <p className="mt-4 text-sm text-slate-400">No login events found.</p>
+          ) : (
+            <div className="mt-4 overflow-x-auto">
+              <table className="w-full min-w-[900px] border-collapse text-left text-sm">
+                <thead>
+                  <tr className="border-b border-white/10 text-slate-400">
+                    <th className="py-3 pr-3 font-semibold">Event</th>
+                    <th className="py-3 pr-3 font-semibold">User</th>
+                    <th className="py-3 pr-3 font-semibold">IP</th>
+                    <th className="py-3 pr-3 font-semibold">Country</th>
+                    <th className="py-3 pr-3 font-semibold">State</th>
+                    <th className="py-3 pr-3 font-semibold">City</th>
+                    <th className="py-3 pr-3 font-semibold">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {loginEvents.map((event) => (
+                    <tr key={event.id} className="border-b border-white/5">
+                      <td className="py-3 pr-3">#{event.id}</td>
+                      <td className="py-3 pr-3">
+                        {event.user_email || "Unknown user"}
+                        <div className="text-xs text-slate-400">
+                          ID: {event.user_id}
+                        </div>
+                      </td>
+                      <td className="py-3 pr-3">{event.login_ip || "-"}</td>
+                      <td className="py-3 pr-3">{event.country_code || "-"}</td>
+                      <td className="py-3 pr-3">{event.state || "-"}</td>
+                      <td className="py-3 pr-3">{event.city || "-"}</td>
+                      <td className="py-3 pr-3">{formatDate(event.created_at)}</td>
                     </tr>
                   ))}
                 </tbody>

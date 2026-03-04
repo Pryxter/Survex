@@ -59,14 +59,18 @@ export default function TheoremReachPage() {
         };
 
         if (!response.ok) {
-          throw new Error(data.details || data.message || "Failed to load surveys.");
+          throw new Error(
+            data.details || data.message || "Failed to load surveys.",
+          );
         }
 
         setSource(data.source || "demo");
         setSurveys(Array.isArray(data.surveys) ? data.surveys : []);
       })
       .catch((error) => {
-        setErrorMessage(toUiErrorMessage(error.message || "Failed to load surveys."));
+        setErrorMessage(
+          toUiErrorMessage(error.message || "Failed to load surveys."),
+        );
       })
       .finally(() => {
         setLoading(false);
@@ -86,14 +90,14 @@ export default function TheoremReachPage() {
             Available Surveys
           </h1>
           <p className="mt-3 max-w-2xl text-slate-300">
-            Complete surveys and receive rewards. Duplicate completion checks are
-            active to prevent fraud.
+            Complete surveys and receive rewards. Duplicate completion checks
+            are active to prevent fraud.
           </p>
 
           {source === "demo" && !errorMessage ? (
             <p className="mt-4 rounded-xl border border-amber-300/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-200">
-              Demo mode active. Configure TheoremReach API credentials in backend
-              env to load live surveys.
+              Demo mode active. Configure TheoremReach API credentials in
+              backend env to load live surveys.
             </p>
           ) : null}
 
