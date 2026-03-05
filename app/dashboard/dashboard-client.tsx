@@ -9,11 +9,6 @@ import SiteFooter from "../components/site-footer";
 
 const surveyWalls = [
   {
-    name: "BitLabs",
-    image: "/survey-walls/cpx-research.svg",
-    alt: "BitLabs visual",
-  },
-  {
     name: "TheoremReach",
     image: "/survey-walls/theoremreach.svg",
     alt: "TheoremReach visual",
