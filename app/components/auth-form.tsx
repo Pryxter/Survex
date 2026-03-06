@@ -33,6 +33,67 @@ type AuthFormProps = {
 };
 
 const DEVICE_ID_STORAGE_KEY = "survex_device_id";
+const COUNTRY_OPTIONS: Array<{ code: string; name: string }> = [
+  { code: "US", name: "United States" },
+  { code: "MX", name: "Mexico" },
+  { code: "CA", name: "Canada" },
+  { code: "GB", name: "United Kingdom" },
+  { code: "AU", name: "Australia" },
+  { code: "NZ", name: "New Zealand" },
+  { code: "ES", name: "Spain" },
+  { code: "FR", name: "France" },
+  { code: "DE", name: "Germany" },
+  { code: "IT", name: "Italy" },
+  { code: "BR", name: "Brazil" },
+  { code: "AR", name: "Argentina" },
+  { code: "CL", name: "Chile" },
+  { code: "CO", name: "Colombia" },
+  { code: "PE", name: "Peru" },
+  { code: "VE", name: "Venezuela" },
+  { code: "UY", name: "Uruguay" },
+  { code: "PY", name: "Paraguay" },
+  { code: "BO", name: "Bolivia" },
+  { code: "EC", name: "Ecuador" },
+  { code: "CR", name: "Costa Rica" },
+  { code: "PA", name: "Panama" },
+  { code: "DO", name: "Dominican Republic" },
+  { code: "GT", name: "Guatemala" },
+  { code: "SV", name: "El Salvador" },
+  { code: "HN", name: "Honduras" },
+  { code: "NI", name: "Nicaragua" },
+  { code: "JP", name: "Japan" },
+  { code: "KR", name: "South Korea" },
+  { code: "IN", name: "India" },
+  { code: "PH", name: "Philippines" },
+  { code: "TH", name: "Thailand" },
+  { code: "MY", name: "Malaysia" },
+  { code: "SG", name: "Singapore" },
+  { code: "ID", name: "Indonesia" },
+  { code: "VN", name: "Vietnam" },
+  { code: "ZA", name: "South Africa" },
+  { code: "NG", name: "Nigeria" },
+  { code: "KE", name: "Kenya" },
+  { code: "EG", name: "Egypt" },
+  { code: "AE", name: "United Arab Emirates" },
+  { code: "SA", name: "Saudi Arabia" },
+  { code: "TR", name: "Turkey" },
+  { code: "IL", name: "Israel" },
+  { code: "NL", name: "Netherlands" },
+  { code: "BE", name: "Belgium" },
+  { code: "CH", name: "Switzerland" },
+  { code: "AT", name: "Austria" },
+  { code: "SE", name: "Sweden" },
+  { code: "NO", name: "Norway" },
+  { code: "DK", name: "Denmark" },
+  { code: "FI", name: "Finland" },
+  { code: "IE", name: "Ireland" },
+  { code: "PT", name: "Portugal" },
+  { code: "PL", name: "Poland" },
+  { code: "CZ", name: "Czech Republic" },
+  { code: "RO", name: "Romania" },
+  { code: "HU", name: "Hungary" },
+  { code: "GR", name: "Greece" },
+];
 
 function generateDeviceId() {
   if (typeof window !== "undefined" && window.crypto?.randomUUID) {
@@ -59,6 +120,38 @@ function getOrCreateDeviceId() {
   } catch {
     return generateDeviceId();
   }
+}
+
+function isValidPostalCodeForCountry(
+  postalCode: string,
+  countryCode: string,
+): boolean {
+  const normalizedPostalCode = String(postalCode || "").trim();
+  const normalizedCountryCode = String(countryCode || "")
+    .trim()
+    .toUpperCase();
+
+  if (!normalizedPostalCode) {
+    return false;
+  }
+
+  if (normalizedCountryCode === "US") {
+    return /^\d{5}$/.test(normalizedPostalCode);
+  }
+
+  if (normalizedCountryCode === "CA") {
+    return /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/.test(normalizedPostalCode);
+  }
+
+  if (normalizedCountryCode === "GB") {
+    return /^[A-Za-z0-9][A-Za-z0-9\s-]{2,9}$/.test(normalizedPostalCode);
+  }
+
+  if (normalizedCountryCode === "MX") {
+    return /^\d{5}$/.test(normalizedPostalCode);
+  }
+
+  return /^[A-Za-z0-9][A-Za-z0-9\s-]{1,14}$/.test(normalizedPostalCode);
 }
 
 export default function AuthForm({
@@ -165,6 +258,9 @@ export default function AuthForm({
       lastName: String(formData.get("lastName") || "").trim(),
       addressLine1: String(formData.get("addressLine1") || "").trim(),
       addressLine2: String(formData.get("addressLine2") || "").trim(),
+      countryCode: String(formData.get("countryCode") || "")
+        .trim()
+        .toUpperCase(),
       zipCode: String(formData.get("zipCode") || "").trim(),
       age: String(formData.get("age") || "").trim(),
       gender: String(formData.get("gender") || "").trim(),
@@ -177,9 +273,18 @@ export default function AuthForm({
     };
 
     if (mode === "signup") {
-      if (!/^\d{5}$/.test(payload.zipCode)) {
+      if (!/^[A-Z]{2}$/.test(payload.countryCode)) {
         setErrorMessage(
-          "Please use the 5-digit format for your ZIP Code (e.g. 00000).",
+          "Country code must use ISO 2-letter format (e.g. US, MX, AU).",
+        );
+        return;
+      }
+
+      if (!isValidPostalCodeForCountry(payload.zipCode, payload.countryCode)) {
+        setErrorMessage(
+          payload.countryCode === "US"
+            ? "For US, please use the 5-digit ZIP format (e.g. 00000)."
+            : "Please provide a valid postal/ZIP code for your selected country.",
         );
         return;
       }
@@ -315,27 +420,53 @@ export default function AuthForm({
               />
             </div>
 
-            <div className="grid gap-5 md:grid-cols-3">
+            <div className="grid gap-5 md:grid-cols-4">
+              <div>
+                <label
+                  htmlFor="countryCode"
+                  className="mb-2 block text-sm font-medium"
+                >
+                  Country
+                </label>
+                <select
+                  id="countryCode"
+                  name="countryCode"
+                  required
+                  defaultValue=""
+                  className="w-full rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 outline-none ring-cyan-300 transition focus:ring-2"
+                >
+                  <option value="" disabled>
+                    Select country
+                  </option>
+                  {COUNTRY_OPTIONS.map((country) => (
+                    <option key={country.code} value={country.code}>
+                      {country.name} ({country.code})
+                    </option>
+                  ))}
+                </select>
+                <p className="mt-2 text-xs text-slate-400">
+                  Select your country of residence.
+                </p>
+              </div>
+
               <div>
                 <label
                   htmlFor="zipCode"
                   className="mb-2 block text-sm font-medium"
                 >
-                  What is your ZIP code?
+                  Postal / ZIP Code
                 </label>
                 <input
                   id="zipCode"
                   name="zipCode"
                   type="text"
                   required
-                  pattern="\d{5}"
-                  inputMode="numeric"
-                  maxLength={5}
+                  maxLength={15}
                   className="w-full rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 outline-none ring-cyan-300 transition focus:ring-2"
-                  placeholder="00000"
+                  placeholder="Enter postal code"
                 />
                 <p className="mt-2 text-xs text-slate-400">
-                  Please use the 5-digit format for your ZIP Code (e.g. 00000)
+                  Format depends on your country.
                 </p>
               </div>
 
