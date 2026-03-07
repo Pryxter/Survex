@@ -273,7 +273,9 @@ export default function ProfilePage() {
                     const providerLabel =
                       String(item.source || "").toLowerCase() === "bitlabs"
                         ? "BitLabs"
-                        : "TheoremReach";
+                        : String(item.source || "").toLowerCase() === "cpx"
+                          ? "CPX Research"
+                          : "TheoremReach";
                     const statusLabel = isReconciliation
                       ? "Reconciliation"
                       : item.outcome;

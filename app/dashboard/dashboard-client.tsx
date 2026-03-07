@@ -9,9 +9,16 @@ import SiteFooter from "../components/site-footer";
 
 const surveyWalls = [
   {
+    name: "CPX Research",
+    image: "/survey-walls/cpx-research.svg",
+    alt: "CPX Research visual",
+    href: "/CPX",
+  },
+  {
     name: "TheoremReach",
     image: "/survey-walls/theoremreach.svg",
     alt: "TheoremReach visual",
+    href: "/TheoremReach",
   },
 ];
 
@@ -64,10 +71,10 @@ export default function DashboardClient() {
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {surveyWalls.map((wall) =>
-                wall.name === "TheoremReach" || wall.name === "BitLabs" ? (
+                wall.href ? (
                   <Link
                     key={wall.name}
-                    href={wall.name === "BitLabs" ? "/BitLabs" : "/TheoremReach"}
+                    href={wall.href}
                     className="rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:border-cyan-300/60"
                   >
                     <div className="overflow-hidden rounded-xl border border-white/10 bg-slate-800/70">
