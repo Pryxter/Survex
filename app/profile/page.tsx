@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import DashboardNavbar from "../components/dashboard-navbar";
 import SiteFooter from "../components/site-footer";
@@ -48,6 +48,8 @@ type ProfileResponse = {
   message?: string;
 };
 
+const ROWS_PER_PAGE = 6;
+
 function formatDate(value: string) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
@@ -55,6 +57,48 @@ function formatDate(value: string) {
   }
 
   return date.toLocaleString();
+}
+
+type TablePaginationProps = {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (nextPage: number) => void;
+};
+
+function TablePagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: TablePaginationProps) {
+  if (totalPages <= 1) {
+    return null;
+  }
+
+  return (
+    <div className="mt-4 flex items-center justify-between gap-3">
+      <p className="text-xs text-slate-400">
+        Page {currentPage} of {totalPages}
+      </p>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage <= 1}
+          className="rounded-lg border border-white/20 px-3 py-1.5 text-xs font-semibold text-slate-200 transition hover:border-cyan-300/60 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <button
+          type="button"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage >= totalPages}
+          className="rounded-lg border border-white/20 px-3 py-1.5 text-xs font-semibold text-slate-200 transition hover:border-cyan-300/60 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default function ProfilePage() {
@@ -68,6 +112,32 @@ export default function ProfilePage() {
   const [redemptionHistory, setRedemptionHistory] = useState<
     NonNullable<ProfileResponse["redemptionHistory"]>
   >([]);
+  const [surveyPage, setSurveyPage] = useState(1);
+  const [redemptionPage, setRedemptionPage] = useState(1);
+
+  const surveyTotalPages = useMemo(
+    () => Math.max(1, Math.ceil(surveyHistory.length / ROWS_PER_PAGE)),
+    [surveyHistory.length],
+  );
+  const redemptionTotalPages = useMemo(
+    () => Math.max(1, Math.ceil(redemptionHistory.length / ROWS_PER_PAGE)),
+    [redemptionHistory.length],
+  );
+  const safeSurveyPage = Math.min(Math.max(1, surveyPage), surveyTotalPages);
+  const safeRedemptionPage = Math.min(
+    Math.max(1, redemptionPage),
+    redemptionTotalPages,
+  );
+
+  const paginatedSurveyHistory = useMemo(() => {
+    const offset = (safeSurveyPage - 1) * ROWS_PER_PAGE;
+    return surveyHistory.slice(offset, offset + ROWS_PER_PAGE);
+  }, [safeSurveyPage, surveyHistory]);
+
+  const paginatedRedemptionHistory = useMemo(() => {
+    const offset = (safeRedemptionPage - 1) * ROWS_PER_PAGE;
+    return redemptionHistory.slice(offset, offset + ROWS_PER_PAGE);
+  }, [redemptionHistory, safeRedemptionPage]);
 
   useEffect(() => {
     const token = localStorage.getItem("survex_token");
@@ -93,6 +163,8 @@ export default function ProfilePage() {
         setProfileData(data.profile);
         setSurveyHistory(data.surveyHistory || []);
         setRedemptionHistory(data.redemptionHistory || []);
+        setSurveyPage(1);
+        setRedemptionPage(1);
 
         if (data.profile) {
           const existingUserRaw = localStorage.getItem("survex_user");
@@ -252,64 +324,73 @@ export default function ProfilePage() {
           {surveyHistory.length === 0 ? (
             <p className="mt-6 text-sm text-slate-400">No survey history yet.</p>
           ) : (
-            <div className="mt-5 overflow-x-auto">
-              <table className="w-full min-w-[780px] border-collapse text-left text-sm">
-                <thead>
-                  <tr className="border-b border-white/10 text-slate-400">
-                    <th className="py-3 pr-3 font-semibold">Survey ID</th>
-                    <th className="py-3 pr-3 font-semibold">Status</th>
-                    <th className="py-3 pr-3 font-semibold">Value</th>
-                    <th className="py-3 pr-3 font-semibold">Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {surveyHistory.map((item) => {
-                    const normalizedStatusRaw = String(item.status_raw || "")
-                      .trim()
-                      .toLowerCase();
-                    const isReconciliation = normalizedStatusRaw.includes(
-                      "reconciliation",
-                    );
-                    const providerLabel =
-                      String(item.source || "").toLowerCase() === "bitlabs"
-                        ? "BitLabs"
-                        : String(item.source || "").toLowerCase() === "cpx"
-                          ? "CPX Research"
-                          : "TheoremReach";
-                    const statusLabel = isReconciliation
-                      ? "Reconciliation"
-                      : item.outcome;
+            <>
+              <div className="mt-5 overflow-x-auto">
+                <table className="w-full min-w-[780px] border-collapse text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-white/10 text-slate-400">
+                      <th className="py-3 pr-3 font-semibold">Survey ID</th>
+                      <th className="py-3 pr-3 font-semibold">Status</th>
+                      <th className="py-3 pr-3 font-semibold">Value</th>
+                      <th className="py-3 pr-3 font-semibold">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedSurveyHistory.map((item) => {
+                      const normalizedStatusRaw = String(item.status_raw || "")
+                        .trim()
+                        .toLowerCase();
+                      const isReconciliation = normalizedStatusRaw.includes(
+                        "reconciliation",
+                      );
+                      const providerLabel =
+                        String(item.source || "").toLowerCase() === "bitlabs"
+                          ? "BitLabs"
+                          : String(item.source || "").toLowerCase() === "cpx"
+                            ? "CPX Research"
+                            : "TheoremReach";
+                      const statusLabel = isReconciliation
+                        ? "Reconciliation"
+                        : item.outcome;
 
-                    return (
-                      <tr key={item.id} className="border-b border-white/5">
-                        <td className="py-3 pr-3">
-                          {providerLabel} - {item.survey_id || "-"}
-                        </td>
-                        <td className="py-3 pr-3">
-                          <span
-                            className={`rounded-full px-2 py-1 text-xs font-bold ${
-                              isReconciliation
-                                ? "bg-rose-500/20 text-rose-300"
-                                : item.outcome === "Completed"
-                                  ? "bg-emerald-500/20 text-emerald-300"
-                                  : item.outcome === "Reversed"
-                                    ? "bg-amber-500/20 text-amber-300"
-                                    : "bg-rose-500/20 text-rose-300"
-                            }`}
-                          >
-                            {statusLabel}
-                          </span>
-                        </td>
-                        <td className="py-3 pr-3">
-                          $ {Number(item.reward || 0).toFixed(2)}
-                        </td>
-                        <td className="py-3 pr-3">{formatDate(item.created_at)}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                      return (
+                        <tr key={item.id} className="border-b border-white/5">
+                          <td className="py-3 pr-3">
+                            {providerLabel} - {item.survey_id || "-"}
+                          </td>
+                          <td className="py-3 pr-3">
+                            <span
+                              className={`rounded-full px-2 py-1 text-xs font-bold ${
+                                isReconciliation
+                                  ? "bg-rose-500/20 text-rose-300"
+                                  : item.outcome === "Completed"
+                                    ? "bg-emerald-500/20 text-emerald-300"
+                                    : item.outcome === "Reversed"
+                                      ? "bg-amber-500/20 text-amber-300"
+                                      : "bg-rose-500/20 text-rose-300"
+                              }`}
+                            >
+                              {statusLabel}
+                            </span>
+                          </td>
+                          <td className="py-3 pr-3">
+                            $ {Number(item.reward || 0).toFixed(2)}
+                          </td>
+                          <td className="py-3 pr-3">{formatDate(item.created_at)}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              <TablePagination
+                currentPage={safeSurveyPage}
+                totalPages={surveyTotalPages}
+                onPageChange={(nextPage) =>
+                  setSurveyPage(Math.min(Math.max(1, nextPage), surveyTotalPages))
+                }
+              />
+            </>
           )}
         </section>
 
@@ -324,37 +405,48 @@ export default function ProfilePage() {
               No withdrawal requests yet.
             </p>
           ) : (
-            <div className="mt-5 overflow-x-auto">
-              <table className="w-full min-w-[680px] border-collapse text-left text-sm">
-                <thead>
-                  <tr className="border-b border-white/10 text-slate-400">
-                    <th className="py-3 pr-3 font-semibold">Reward</th>
-                    <th className="py-3 pr-3 font-semibold">Amount</th>
-                    <th className="py-3 pr-3 font-semibold">Status</th>
-                    <th className="py-3 pr-3 font-semibold">Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {redemptionHistory.map((item) => (
-                    <tr key={item.id} className="border-b border-white/5">
-                      <td className="py-3 pr-3">{item.reward_method}</td>
-                      <td className="py-3 pr-3">$ {Number(item.amount || 0).toFixed(2)}</td>
-                      <td className="py-3 pr-3">
-                        <span className="rounded-full bg-cyan-500/20 px-2 py-1 text-xs font-bold text-cyan-300">
-                          {item.status}
-                        </span>
-                        {item.payout_reference ? (
-                          <p className="mt-1 text-xs text-emerald-300">
-                            Code/Tx: {item.payout_reference}
-                          </p>
-                        ) : null}
-                      </td>
-                      <td className="py-3 pr-3">{formatDate(item.created_at)}</td>
+            <>
+              <div className="mt-5 overflow-x-auto">
+                <table className="w-full min-w-[680px] border-collapse text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-white/10 text-slate-400">
+                      <th className="py-3 pr-3 font-semibold">Reward</th>
+                      <th className="py-3 pr-3 font-semibold">Amount</th>
+                      <th className="py-3 pr-3 font-semibold">Status</th>
+                      <th className="py-3 pr-3 font-semibold">Date</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {paginatedRedemptionHistory.map((item) => (
+                      <tr key={item.id} className="border-b border-white/5">
+                        <td className="py-3 pr-3">{item.reward_method}</td>
+                        <td className="py-3 pr-3">$ {Number(item.amount || 0).toFixed(2)}</td>
+                        <td className="py-3 pr-3">
+                          <span className="rounded-full bg-cyan-500/20 px-2 py-1 text-xs font-bold text-cyan-300">
+                            {item.status}
+                          </span>
+                          {item.payout_reference ? (
+                            <p className="mt-1 text-xs text-emerald-300">
+                              Code/Tx: {item.payout_reference}
+                            </p>
+                          ) : null}
+                        </td>
+                        <td className="py-3 pr-3">{formatDate(item.created_at)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <TablePagination
+                currentPage={safeRedemptionPage}
+                totalPages={redemptionTotalPages}
+                onPageChange={(nextPage) =>
+                  setRedemptionPage(
+                    Math.min(Math.max(1, nextPage), redemptionTotalPages),
+                  )
+                }
+              />
+            </>
           )}
         </section>
 

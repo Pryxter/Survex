@@ -69,6 +69,8 @@ type AdminOverviewResponse = {
   message?: string;
 };
 
+const ROWS_PER_PAGE = 6;
+
 function formatDate(value: string | null) {
   if (!value) {
     return "-";
@@ -80,6 +82,48 @@ function formatDate(value: string | null) {
   }
 
   return parsed.toLocaleString();
+}
+
+type TablePaginationProps = {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (nextPage: number) => void;
+};
+
+function TablePagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: TablePaginationProps) {
+  if (totalPages <= 1) {
+    return null;
+  }
+
+  return (
+    <div className="mt-4 flex items-center justify-between gap-3">
+      <p className="text-xs text-slate-400">
+        Page {currentPage} of {totalPages}
+      </p>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage <= 1}
+          className="rounded-lg border border-white/20 px-3 py-1.5 text-xs font-semibold text-slate-200 transition hover:border-cyan-300/60 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <button
+          type="button"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage >= totalPages}
+          className="rounded-lg border border-white/20 px-3 py-1.5 text-xs font-semibold text-slate-200 transition hover:border-cyan-300/60 hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default function AdminPage() {
@@ -96,6 +140,10 @@ export default function AdminPage() {
   const [withdrawals, setWithdrawals] = useState<AdminWithdrawal[]>([]);
   const [tickets, setTickets] = useState<AdminTicket[]>([]);
   const [loginEvents, setLoginEvents] = useState<AdminLoginEvent[]>([]);
+  const [usersPage, setUsersPage] = useState(1);
+  const [withdrawalsPage, setWithdrawalsPage] = useState(1);
+  const [loginEventsPage, setLoginEventsPage] = useState(1);
+  const [ticketsPage, setTicketsPage] = useState(1);
 
   const counts = useMemo(
     () => ({
@@ -107,6 +155,43 @@ export default function AdminPage() {
     }),
     [users, withdrawals, tickets, loginEvents],
   );
+
+  const usersTotalPages = useMemo(
+    () => Math.max(1, Math.ceil(users.length / ROWS_PER_PAGE)),
+    [users.length],
+  );
+  const withdrawalsTotalPages = useMemo(
+    () => Math.max(1, Math.ceil(withdrawals.length / ROWS_PER_PAGE)),
+    [withdrawals.length],
+  );
+  const loginEventsTotalPages = useMemo(
+    () => Math.max(1, Math.ceil(loginEvents.length / ROWS_PER_PAGE)),
+    [loginEvents.length],
+  );
+  const ticketsTotalPages = useMemo(
+    () => Math.max(1, Math.ceil(tickets.length / ROWS_PER_PAGE)),
+    [tickets.length],
+  );
+
+  const paginatedUsers = useMemo(() => {
+    const offset = (usersPage - 1) * ROWS_PER_PAGE;
+    return users.slice(offset, offset + ROWS_PER_PAGE);
+  }, [users, usersPage]);
+
+  const paginatedWithdrawals = useMemo(() => {
+    const offset = (withdrawalsPage - 1) * ROWS_PER_PAGE;
+    return withdrawals.slice(offset, offset + ROWS_PER_PAGE);
+  }, [withdrawals, withdrawalsPage]);
+
+  const paginatedLoginEvents = useMemo(() => {
+    const offset = (loginEventsPage - 1) * ROWS_PER_PAGE;
+    return loginEvents.slice(offset, offset + ROWS_PER_PAGE);
+  }, [loginEvents, loginEventsPage]);
+
+  const paginatedTickets = useMemo(() => {
+    const offset = (ticketsPage - 1) * ROWS_PER_PAGE;
+    return tickets.slice(offset, offset + ROWS_PER_PAGE);
+  }, [tickets, ticketsPage]);
 
   useEffect(() => {
     const token = localStorage.getItem("survex_token");
@@ -133,6 +218,10 @@ export default function AdminPage() {
         setWithdrawals(Array.isArray(data.withdrawals) ? data.withdrawals : []);
         setTickets(Array.isArray(data.tickets) ? data.tickets : []);
         setLoginEvents(Array.isArray(data.loginEvents) ? data.loginEvents : []);
+        setUsersPage(1);
+        setWithdrawalsPage(1);
+        setLoginEventsPage(1);
+        setTicketsPage(1);
       })
       .catch((error) => {
         setErrorMessage(
@@ -143,6 +232,30 @@ export default function AdminPage() {
         setIsLoading(false);
       });
   }, [router]);
+
+  useEffect(() => {
+    if (usersPage > usersTotalPages) {
+      setUsersPage(usersTotalPages);
+    }
+  }, [usersPage, usersTotalPages]);
+
+  useEffect(() => {
+    if (withdrawalsPage > withdrawalsTotalPages) {
+      setWithdrawalsPage(withdrawalsTotalPages);
+    }
+  }, [withdrawalsPage, withdrawalsTotalPages]);
+
+  useEffect(() => {
+    if (loginEventsPage > loginEventsTotalPages) {
+      setLoginEventsPage(loginEventsTotalPages);
+    }
+  }, [loginEventsPage, loginEventsTotalPages]);
+
+  useEffect(() => {
+    if (ticketsPage > ticketsTotalPages) {
+      setTicketsPage(ticketsTotalPages);
+    }
+  }, [ticketsPage, ticketsTotalPages]);
 
   async function handleToggleBan(user: AdminUser) {
     const token = localStorage.getItem("survex_token");
@@ -428,95 +541,102 @@ export default function AdminPage() {
           {users.length === 0 ? (
             <p className="mt-4 text-sm text-slate-400">No users found.</p>
           ) : (
-            <div className="mt-4 overflow-x-auto">
-              <table className="w-full min-w-[1700px] border-collapse text-left text-sm">
-                <thead>
-                  <tr className="border-b border-white/10 text-slate-400">
-                    <th className="py-3 pr-3 font-semibold">ID</th>
-                    <th className="py-3 pr-3 font-semibold">Email</th>
-                    <th className="py-3 pr-3 font-semibold">Name</th>
-                    <th className="py-3 pr-3 font-semibold">Role</th>
-                    <th className="py-3 pr-3 font-semibold">Balance</th>
-                    <th className="py-3 pr-3 font-semibold">Status</th>
-                    <th className="py-3 pr-3 font-semibold">Signup IP</th>
-                    <th className="py-3 pr-3 font-semibold">Signup Country</th>
-                    <th className="py-3 pr-3 font-semibold">Signup State</th>
-                    <th className="py-3 pr-3 font-semibold">Signup City</th>
-                    <th className="py-3 pr-3 font-semibold">Last Login IP</th>
-                    <th className="py-3 pr-3 font-semibold">Last Login Country</th>
-                    <th className="py-3 pr-3 font-semibold">Last Login State</th>
-                    <th className="py-3 pr-3 font-semibold">Last Login City</th>
-                    <th className="py-3 pr-3 font-semibold">Created</th>
-                    <th className="py-3 pr-3 font-semibold">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.map((user) => {
-                    const isOwner = String(user.user_role || "").toLowerCase() === "owner";
-                    return (
-                      <tr key={user.id} className="border-b border-white/5">
-                        <td className="py-3 pr-3">{user.id}</td>
-                        <td className="py-3 pr-3">{user.email}</td>
-                        <td className="py-3 pr-3">
-                          {[user.first_name, user.last_name].filter(Boolean).join(" ") || "-"}
-                        </td>
-                        <td className="py-3 pr-3">
-                          <span className="rounded-full bg-cyan-500/20 px-2 py-1 text-xs font-bold text-cyan-300">
-                            {user.user_role || "user"}
-                          </span>
-                        </td>
-                        <td className="py-3 pr-3">$ {Number(user.balance || 0).toFixed(2)}</td>
-                        <td className="py-3 pr-3">
-                          {user.is_banned ? (
-                            <span className="rounded-full bg-red-500/20 px-2 py-1 text-xs font-bold text-red-300">
-                              Banned
+            <>
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full min-w-[1700px] border-collapse text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-white/10 text-slate-400">
+                      <th className="py-3 pr-3 font-semibold">ID</th>
+                      <th className="py-3 pr-3 font-semibold">Email</th>
+                      <th className="py-3 pr-3 font-semibold">Name</th>
+                      <th className="py-3 pr-3 font-semibold">Role</th>
+                      <th className="py-3 pr-3 font-semibold">Balance</th>
+                      <th className="py-3 pr-3 font-semibold">Status</th>
+                      <th className="py-3 pr-3 font-semibold">Signup IP</th>
+                      <th className="py-3 pr-3 font-semibold">Signup Country</th>
+                      <th className="py-3 pr-3 font-semibold">Signup State</th>
+                      <th className="py-3 pr-3 font-semibold">Signup City</th>
+                      <th className="py-3 pr-3 font-semibold">Last Login IP</th>
+                      <th className="py-3 pr-3 font-semibold">Last Login Country</th>
+                      <th className="py-3 pr-3 font-semibold">Last Login State</th>
+                      <th className="py-3 pr-3 font-semibold">Last Login City</th>
+                      <th className="py-3 pr-3 font-semibold">Created</th>
+                      <th className="py-3 pr-3 font-semibold">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedUsers.map((user) => {
+                      const isOwner = String(user.user_role || "").toLowerCase() === "owner";
+                      return (
+                        <tr key={user.id} className="border-b border-white/5">
+                          <td className="py-3 pr-3">{user.id}</td>
+                          <td className="py-3 pr-3">{user.email}</td>
+                          <td className="py-3 pr-3">
+                            {[user.first_name, user.last_name].filter(Boolean).join(" ") || "-"}
+                          </td>
+                          <td className="py-3 pr-3">
+                            <span className="rounded-full bg-cyan-500/20 px-2 py-1 text-xs font-bold text-cyan-300">
+                              {user.user_role || "user"}
                             </span>
-                          ) : (
-                            <span className="rounded-full bg-emerald-500/20 px-2 py-1 text-xs font-bold text-emerald-300">
-                              Active
-                            </span>
-                          )}
-                        </td>
-                        <td className="py-3 pr-3">{user.signup_ip || "-"}</td>
-                        <td className="py-3 pr-3">{user.signup_country_code || "-"}</td>
-                        <td className="py-3 pr-3">{user.signup_state || "-"}</td>
-                        <td className="py-3 pr-3">{user.signup_city || "-"}</td>
-                        <td className="py-3 pr-3">
-                          {user.last_login_ip || "-"}
-                          <div className="text-xs text-slate-400">
-                            {formatDate(user.last_login_at)}
-                          </div>
-                        </td>
-                        <td className="py-3 pr-3">{user.last_login_country_code || "-"}</td>
-                        <td className="py-3 pr-3">{user.last_login_state || "-"}</td>
-                        <td className="py-3 pr-3">{user.last_login_city || "-"}</td>
-                        <td className="py-3 pr-3">{formatDate(user.created_at)}</td>
-                        <td className="py-3 pr-3">
-                          <button
-                            type="button"
-                            disabled={pendingUserId === user.id || isOwner}
-                            onClick={() => handleToggleBan(user)}
-                            className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${
-                              user.is_banned
-                                ? "border border-emerald-400/40 bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25"
-                                : "border border-red-400/40 bg-red-500/15 text-red-200 hover:bg-red-500/25"
-                            } disabled:cursor-not-allowed disabled:opacity-60`}
-                          >
-                            {isOwner
-                              ? "Protected"
-                              : pendingUserId === user.id
-                                ? "Saving..."
-                                : user.is_banned
-                                  ? "Unban"
-                                  : "Ban"}
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                          </td>
+                          <td className="py-3 pr-3">$ {Number(user.balance || 0).toFixed(2)}</td>
+                          <td className="py-3 pr-3">
+                            {user.is_banned ? (
+                              <span className="rounded-full bg-red-500/20 px-2 py-1 text-xs font-bold text-red-300">
+                                Banned
+                              </span>
+                            ) : (
+                              <span className="rounded-full bg-emerald-500/20 px-2 py-1 text-xs font-bold text-emerald-300">
+                                Active
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-3 pr-3">{user.signup_ip || "-"}</td>
+                          <td className="py-3 pr-3">{user.signup_country_code || "-"}</td>
+                          <td className="py-3 pr-3">{user.signup_state || "-"}</td>
+                          <td className="py-3 pr-3">{user.signup_city || "-"}</td>
+                          <td className="py-3 pr-3">
+                            {user.last_login_ip || "-"}
+                            <div className="text-xs text-slate-400">
+                              {formatDate(user.last_login_at)}
+                            </div>
+                          </td>
+                          <td className="py-3 pr-3">{user.last_login_country_code || "-"}</td>
+                          <td className="py-3 pr-3">{user.last_login_state || "-"}</td>
+                          <td className="py-3 pr-3">{user.last_login_city || "-"}</td>
+                          <td className="py-3 pr-3">{formatDate(user.created_at)}</td>
+                          <td className="py-3 pr-3">
+                            <button
+                              type="button"
+                              disabled={pendingUserId === user.id || isOwner}
+                              onClick={() => handleToggleBan(user)}
+                              className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${
+                                user.is_banned
+                                  ? "border border-emerald-400/40 bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25"
+                                  : "border border-red-400/40 bg-red-500/15 text-red-200 hover:bg-red-500/25"
+                              } disabled:cursor-not-allowed disabled:opacity-60`}
+                            >
+                              {isOwner
+                                ? "Protected"
+                                : pendingUserId === user.id
+                                  ? "Saving..."
+                                  : user.is_banned
+                                    ? "Unban"
+                                    : "Ban"}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              <TablePagination
+                currentPage={usersPage}
+                totalPages={usersTotalPages}
+                onPageChange={setUsersPage}
+              />
+            </>
           )}
         </section>
 
@@ -525,8 +645,9 @@ export default function AdminPage() {
           {withdrawals.length === 0 ? (
             <p className="mt-4 text-sm text-slate-400">No withdrawal requests found.</p>
           ) : (
-            <div className="mt-4 overflow-x-auto">
-              <table className="w-full min-w-[900px] border-collapse text-left text-sm">
+            <>
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full min-w-[900px] border-collapse text-left text-sm">
                 <thead>
                   <tr className="border-b border-white/10 text-slate-400">
                     <th className="py-3 pr-3 font-semibold">ID</th>
@@ -540,7 +661,7 @@ export default function AdminPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {withdrawals.map((item) => (
+                  {paginatedWithdrawals.map((item) => (
                     <tr key={item.id} className="border-b border-white/5">
                       <td className="py-3 pr-3">#{item.id}</td>
                       <td className="py-3 pr-3">
@@ -587,8 +708,14 @@ export default function AdminPage() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
-            </div>
+                </table>
+              </div>
+              <TablePagination
+                currentPage={withdrawalsPage}
+                totalPages={withdrawalsTotalPages}
+                onPageChange={setWithdrawalsPage}
+              />
+            </>
           )}
         </section>
 
@@ -597,8 +724,9 @@ export default function AdminPage() {
           {loginEvents.length === 0 ? (
             <p className="mt-4 text-sm text-slate-400">No login events found.</p>
           ) : (
-            <div className="mt-4 overflow-x-auto">
-              <table className="w-full min-w-[900px] border-collapse text-left text-sm">
+            <>
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full min-w-[900px] border-collapse text-left text-sm">
                 <thead>
                   <tr className="border-b border-white/10 text-slate-400">
                     <th className="py-3 pr-3 font-semibold">Event</th>
@@ -611,7 +739,7 @@ export default function AdminPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {loginEvents.map((event) => (
+                  {paginatedLoginEvents.map((event) => (
                     <tr key={event.id} className="border-b border-white/5">
                       <td className="py-3 pr-3">#{event.id}</td>
                       <td className="py-3 pr-3">
@@ -628,8 +756,14 @@ export default function AdminPage() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
-            </div>
+                </table>
+              </div>
+              <TablePagination
+                currentPage={loginEventsPage}
+                totalPages={loginEventsTotalPages}
+                onPageChange={setLoginEventsPage}
+              />
+            </>
           )}
         </section>
 
@@ -638,8 +772,9 @@ export default function AdminPage() {
           {tickets.length === 0 ? (
             <p className="mt-4 text-sm text-slate-400">No support tickets found.</p>
           ) : (
-            <div className="mt-4 overflow-x-auto">
-              <table className="w-full min-w-[900px] border-collapse text-left text-sm">
+            <>
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full min-w-[900px] border-collapse text-left text-sm">
                 <thead>
                   <tr className="border-b border-white/10 text-slate-400">
                     <th className="py-3 pr-3 font-semibold">Ticket</th>
@@ -653,7 +788,7 @@ export default function AdminPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {tickets.map((ticket) => (
+                  {paginatedTickets.map((ticket) => (
                     <tr key={ticket.id} className="border-b border-white/5">
                       <td className="py-3 pr-3">#{ticket.id}</td>
                       <td className="py-3 pr-3">{ticket.email}</td>
@@ -690,8 +825,14 @@ export default function AdminPage() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
-            </div>
+                </table>
+              </div>
+              <TablePagination
+                currentPage={ticketsPage}
+                totalPages={ticketsTotalPages}
+                onPageChange={setTicketsPage}
+              />
+            </>
           )}
         </section>
 
