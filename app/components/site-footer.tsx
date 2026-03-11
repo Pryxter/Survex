@@ -2,10 +2,26 @@ import Link from "next/link";
 import Image from "next/image";
 
 const socialLinks = [
-  { name: "Facebook", short: "/Facebook.svg" },
-  { name: "Instagram", short: "/Instagram.svg" },
-  { name: "YouTube", short: "/Youtube.svg" },
-  { name: "TikTok", short: "/TikTok.svg" },
+  {
+    name: "Facebook",
+    short: "/Facebook.svg",
+    urlx: "https://www.facebook.com/Survex/",
+  },
+  {
+    name: "Instagram",
+    short: "/Instagram.svg",
+    urlx: "https://www.instagram.com/Survex/",
+  },
+  {
+    name: "YouTube",
+    short: "/Youtube.svg",
+    urlx: "https://www.youtube.com/Survex/",
+  },
+  {
+    name: "TikTok",
+    short: "/TikTok.svg",
+    urlx: "https://www.tiktok.com/Survex/",
+  },
 ];
 
 type SiteFooterProps = {
@@ -44,7 +60,7 @@ export default function SiteFooter({ className = "" }: SiteFooterProps) {
         {socialLinks.map((social) => (
           <a
             key={social.name}
-            href="#"
+            href={social.urlx}
             aria-label={social.name}
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-[11px] font-bold uppercase text-slate-200 hover:border-cyan-300/60 hover:text-cyan-200"
           >

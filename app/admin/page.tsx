@@ -61,11 +61,22 @@ type AdminLoginEvent = {
   created_at: string;
 };
 
+type AdminSurveyCompletion = {
+  user_id: number;
+  user_email: string | null;
+  survey_id: string;
+  status_raw: string | null;
+  reward: string | number;
+  source: string | null;
+  created_at: string;
+};
+
 type AdminOverviewResponse = {
   users?: AdminUser[];
   withdrawals?: AdminWithdrawal[];
   tickets?: AdminTicket[];
   loginEvents?: AdminLoginEvent[];
+  surveyCompletions?: AdminSurveyCompletion[];
   message?: string;
 };
 
@@ -135,15 +146,23 @@ export default function AdminPage() {
   const [pendingWithdrawalId, setPendingWithdrawalId] = useState<number | null>(
     null,
   );
+  const [pendingWithdrawalDeleteId, setPendingWithdrawalDeleteId] = useState<
+    number | null
+  >(null);
   const [pendingTicketId, setPendingTicketId] = useState<number | null>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [withdrawals, setWithdrawals] = useState<AdminWithdrawal[]>([]);
   const [tickets, setTickets] = useState<AdminTicket[]>([]);
   const [loginEvents, setLoginEvents] = useState<AdminLoginEvent[]>([]);
+  const [surveyCompletions, setSurveyCompletions] = useState<
+    AdminSurveyCompletion[]
+  >([]);
   const [usersPage, setUsersPage] = useState(1);
   const [withdrawalsPage, setWithdrawalsPage] = useState(1);
   const [loginEventsPage, setLoginEventsPage] = useState(1);
   const [ticketsPage, setTicketsPage] = useState(1);
+  const [surveyCompletionsPage, setSurveyCompletionsPage] = useState(1);
+  const [surveySearchQuery, setSurveySearchQuery] = useState("");
 
   const counts = useMemo(
     () => ({
@@ -152,8 +171,9 @@ export default function AdminPage() {
       withdrawals: withdrawals.length,
       tickets: tickets.length,
       loginEvents: loginEvents.length,
+      surveyCompletions: surveyCompletions.length,
     }),
-    [users, withdrawals, tickets, loginEvents],
+    [users, withdrawals, tickets, loginEvents, surveyCompletions],
   );
 
   const usersTotalPages = useMemo(
@@ -171,6 +191,28 @@ export default function AdminPage() {
   const ticketsTotalPages = useMemo(
     () => Math.max(1, Math.ceil(tickets.length / ROWS_PER_PAGE)),
     [tickets.length],
+  );
+  const normalizedSurveySearch = useMemo(
+    () => surveySearchQuery.trim().toLowerCase(),
+    [surveySearchQuery],
+  );
+  const filteredSurveyCompletions = useMemo(() => {
+    if (!normalizedSurveySearch) {
+      return surveyCompletions;
+    }
+
+    return surveyCompletions.filter((item) => {
+      const userIdText = String(item.user_id || "");
+      const emailText = String(item.user_email || "").toLowerCase();
+      return (
+        userIdText.includes(normalizedSurveySearch) ||
+        emailText.includes(normalizedSurveySearch)
+      );
+    });
+  }, [normalizedSurveySearch, surveyCompletions]);
+  const surveyCompletionsTotalPages = useMemo(
+    () => Math.max(1, Math.ceil(filteredSurveyCompletions.length / ROWS_PER_PAGE)),
+    [filteredSurveyCompletions.length],
   );
 
   const paginatedUsers = useMemo(() => {
@@ -192,6 +234,10 @@ export default function AdminPage() {
     const offset = (ticketsPage - 1) * ROWS_PER_PAGE;
     return tickets.slice(offset, offset + ROWS_PER_PAGE);
   }, [tickets, ticketsPage]);
+  const paginatedSurveyCompletions = useMemo(() => {
+    const offset = (surveyCompletionsPage - 1) * ROWS_PER_PAGE;
+    return filteredSurveyCompletions.slice(offset, offset + ROWS_PER_PAGE);
+  }, [filteredSurveyCompletions, surveyCompletionsPage]);
 
   useEffect(() => {
     const token = localStorage.getItem("survex_token");
@@ -218,10 +264,14 @@ export default function AdminPage() {
         setWithdrawals(Array.isArray(data.withdrawals) ? data.withdrawals : []);
         setTickets(Array.isArray(data.tickets) ? data.tickets : []);
         setLoginEvents(Array.isArray(data.loginEvents) ? data.loginEvents : []);
+        setSurveyCompletions(
+          Array.isArray(data.surveyCompletions) ? data.surveyCompletions : [],
+        );
         setUsersPage(1);
         setWithdrawalsPage(1);
         setLoginEventsPage(1);
         setTicketsPage(1);
+        setSurveyCompletionsPage(1);
       })
       .catch((error) => {
         setErrorMessage(
@@ -256,6 +306,12 @@ export default function AdminPage() {
       setTicketsPage(ticketsTotalPages);
     }
   }, [ticketsPage, ticketsTotalPages]);
+
+  useEffect(() => {
+    if (surveyCompletionsPage > surveyCompletionsTotalPages) {
+      setSurveyCompletionsPage(surveyCompletionsTotalPages);
+    }
+  }, [surveyCompletionsPage, surveyCompletionsTotalPages]);
 
   async function handleToggleBan(user: AdminUser) {
     const token = localStorage.getItem("survex_token");
@@ -419,6 +475,75 @@ export default function AdminPage() {
     }
   }
 
+  async function handleDeleteWithdrawal(withdrawal: AdminWithdrawal) {
+    const token = localStorage.getItem("survex_token");
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Delete withdrawal request #${withdrawal.id}?`,
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    setErrorMessage("");
+    setStatusMessage("");
+    setPendingWithdrawalDeleteId(withdrawal.id);
+
+    try {
+      const apiBaseUrl = getApiBaseUrl();
+      const response = await fetch(
+        `${apiBaseUrl}/api/admin/withdrawals/${withdrawal.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const data = (await response.json()) as {
+        message?: string;
+        deletedWithdrawalId?: number;
+        refundApplied?: boolean;
+        refundedUserId?: number | null;
+        refundedAmount?: number;
+      };
+
+      if (!response.ok) {
+        throw new Error(data.message || "Could not delete withdrawal.");
+      }
+
+      setWithdrawals((previous) =>
+        previous.filter((item) => item.id !== withdrawal.id),
+      );
+
+      if (data.refundApplied && data.refundedUserId && data.refundedAmount) {
+        setUsers((previous) =>
+          previous.map((user) =>
+            user.id === data.refundedUserId
+              ? {
+                  ...user,
+                  balance: Number(user.balance || 0) + Number(data.refundedAmount || 0),
+                }
+              : user,
+          ),
+        );
+      }
+
+      setStatusMessage(data.message || "Withdrawal request deleted.");
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Could not delete withdrawal.",
+      );
+    } finally {
+      setPendingWithdrawalDeleteId(null);
+    }
+  }
+
   async function handleTicketStatusChange(
     ticket: AdminTicket,
     nextStatus: "open" | "closed",
@@ -490,7 +615,7 @@ export default function AdminPage() {
             suspicious accounts.
           </p>
 
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
             <div className="rounded-xl border border-white/10 bg-white/5 p-4">
               <p className="text-xs uppercase tracking-wide text-slate-400">Users</p>
               <p className="mt-1 text-2xl font-black">{counts.users}</p>
@@ -516,6 +641,12 @@ export default function AdminPage() {
                 Login Events
               </p>
               <p className="mt-1 text-2xl font-black">{counts.loginEvents}</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <p className="text-xs uppercase tracking-wide text-slate-400">
+                Completed Surveys
+              </p>
+              <p className="mt-1 text-2xl font-black">{counts.surveyCompletions}</p>
             </div>
           </div>
 
@@ -678,32 +809,55 @@ export default function AdminPage() {
                       <td className="py-3 pr-3">{item.payout_reference || "-"}</td>
                       <td className="py-3 pr-3">{formatDate(item.created_at)}</td>
                       <td className="py-3 pr-3">
-                        {String(item.status).toLowerCase() === "requested" ? (
-                          <div className="flex items-center gap-2">
+                        {(() => {
+                          const isRequested =
+                            String(item.status).toLowerCase() === "requested";
+                          const isBusy =
+                            pendingWithdrawalId === item.id ||
+                            pendingWithdrawalDeleteId === item.id;
+
+                          return isRequested ? (
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleWithdrawalStatusChange(item, "approved")
+                                }
+                                disabled={isBusy}
+                                className="rounded-full border border-emerald-400/40 bg-emerald-500/15 px-3 py-1.5 text-xs font-bold text-emerald-200 hover:bg-emerald-500/25 disabled:cursor-not-allowed disabled:opacity-60"
+                              >
+                                {pendingWithdrawalId === item.id ? "Saving..." : "Approve"}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleWithdrawalStatusChange(item, "rejected")
+                                }
+                                disabled={isBusy}
+                                className="rounded-full border border-red-400/40 bg-red-500/15 px-3 py-1.5 text-xs font-bold text-red-200 hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-60"
+                              >
+                                Reject
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteWithdrawal(item)}
+                                disabled={isBusy}
+                                className="rounded-full border border-rose-400/40 bg-rose-500/15 px-3 py-1.5 text-xs font-bold text-rose-200 hover:bg-rose-500/25 disabled:cursor-not-allowed disabled:opacity-60"
+                              >
+                                {pendingWithdrawalDeleteId === item.id ? "Deleting..." : "Delete"}
+                              </button>
+                            </div>
+                          ) : (
                             <button
                               type="button"
-                              onClick={() =>
-                                handleWithdrawalStatusChange(item, "approved")
-                              }
-                              disabled={pendingWithdrawalId === item.id}
-                              className="rounded-full border border-emerald-400/40 bg-emerald-500/15 px-3 py-1.5 text-xs font-bold text-emerald-200 hover:bg-emerald-500/25 disabled:cursor-not-allowed disabled:opacity-60"
+                              onClick={() => handleDeleteWithdrawal(item)}
+                              disabled={isBusy}
+                              className="rounded-full border border-rose-400/40 bg-rose-500/15 px-3 py-1.5 text-xs font-bold text-rose-200 hover:bg-rose-500/25 disabled:cursor-not-allowed disabled:opacity-60"
                             >
-                              {pendingWithdrawalId === item.id ? "Saving..." : "Approve"}
+                              {pendingWithdrawalDeleteId === item.id ? "Deleting..." : "Delete"}
                             </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleWithdrawalStatusChange(item, "rejected")
-                              }
-                              disabled={pendingWithdrawalId === item.id}
-                              className="rounded-full border border-red-400/40 bg-red-500/15 px-3 py-1.5 text-xs font-bold text-red-200 hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-60"
-                            >
-                              Reject
-                            </button>
-                          </div>
-                        ) : (
-                          <span className="text-xs text-slate-500">No actions</span>
-                        )}
+                          );
+                        })()}
                       </td>
                     </tr>
                   ))}
@@ -762,6 +916,95 @@ export default function AdminPage() {
                 currentPage={loginEventsPage}
                 totalPages={loginEventsTotalPages}
                 onPageChange={setLoginEventsPage}
+              />
+            </>
+          )}
+        </section>
+
+        <section className="mt-8 rounded-3xl border border-white/10 bg-slate-900/80 p-6 md:p-8">
+          <h2 className="text-2xl font-extrabold">Completed Surveys</h2>
+          <p className="mt-2 text-sm text-slate-300">
+            Completed surveys credited to users. Search by user ID or email.
+          </p>
+
+          <div className="mt-4 max-w-md">
+            <input
+              type="text"
+              value={surveySearchQuery}
+              onChange={(event) => {
+                setSurveySearchQuery(event.target.value);
+                setSurveyCompletionsPage(1);
+              }}
+              placeholder="Search user by ID or email..."
+              className="w-full rounded-xl border border-white/15 bg-slate-950/60 px-4 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:border-cyan-300/60 focus:outline-none"
+            />
+          </div>
+
+          {filteredSurveyCompletions.length === 0 ? (
+            <p className="mt-4 text-sm text-slate-400">
+              No completed surveys found for this search.
+            </p>
+          ) : (
+            <>
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full min-w-[980px] border-collapse text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-white/10 text-slate-400">
+                      <th className="py-3 pr-3 font-semibold">User ID</th>
+                      <th className="py-3 pr-3 font-semibold">Email</th>
+                      <th className="py-3 pr-3 font-semibold">Survey ID</th>
+                      <th className="py-3 pr-3 font-semibold">Status</th>
+                      <th className="py-3 pr-3 font-semibold">Value</th>
+                      <th className="py-3 pr-3 font-semibold">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedSurveyCompletions.map((item, index) => {
+                      const normalizedSource = String(item.source || "")
+                        .trim()
+                        .toLowerCase();
+                      const providerLabel =
+                        normalizedSource === "bitlabs"
+                          ? "BitLabs"
+                          : normalizedSource === "cpx"
+                            ? "CPX Research"
+                            : "TheoremReach";
+                      const statusRaw = String(item.status_raw || "").trim();
+                      const normalizedStatus = statusRaw.toLowerCase();
+                      const statusLabel =
+                        normalizedStatus === "1" || normalizedStatus === "completed"
+                          ? "Completed"
+                          : statusRaw || "Completed";
+
+                      return (
+                        <tr
+                          key={`${item.user_id}-${item.survey_id}-${item.created_at}-${index}`}
+                          className="border-b border-white/5"
+                        >
+                          <td className="py-3 pr-3">{item.user_id}</td>
+                          <td className="py-3 pr-3">{item.user_email || "Unknown user"}</td>
+                          <td className="py-3 pr-3">
+                            {providerLabel} - {item.survey_id || "-"}
+                          </td>
+                          <td className="py-3 pr-3">
+                            <span className="rounded-full bg-emerald-500/20 px-2 py-1 text-xs font-bold text-emerald-300">
+                              {statusLabel}
+                            </span>
+                          </td>
+                          <td className="py-3 pr-3">
+                            $ {Number(item.reward || 0).toFixed(2)}
+                          </td>
+                          <td className="py-3 pr-3">{formatDate(item.created_at)}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              <TablePagination
+                currentPage={surveyCompletionsPage}
+                totalPages={surveyCompletionsTotalPages}
+                onPageChange={setSurveyCompletionsPage}
               />
             </>
           )}
