@@ -974,9 +974,12 @@ export default function AdminPage() {
         </section>
 
         <section className="mt-8 rounded-3xl border border-white/10 bg-slate-900/80 p-6 md:p-8">
-          <h2 className="text-2xl font-extrabold">Completed Surveys</h2>
+          <h2 className="text-2xl font-extrabold">
+            Completed & Reversed Surveys
+          </h2>
           <p className="mt-2 text-sm text-slate-300">
-            Completed surveys credited to users. Search by user ID or email.
+            Survey history with completed and reversed events. Search by user ID
+            or email.
           </p>
 
           <div className="mt-4 max-w-md">
@@ -1023,8 +1026,22 @@ export default function AdminPage() {
                             : "TheoremReach";
                       const statusRaw = String(item.status_raw || "").trim();
                       const normalizedStatus = statusRaw.toLowerCase();
-                      const statusLabel =
-                        normalizedStatus === "1" || normalizedStatus === "completed"
+                      const isReversed = [
+                        "2",
+                        "reversed",
+                        "reversal",
+                        "chargeback",
+                        "reconciliation",
+                      ].includes(normalizedStatus);
+                      const isCompleted = [
+                        "1",
+                        "completed",
+                        "complete",
+                        "credited",
+                      ].includes(normalizedStatus);
+                      const statusLabel = isReversed
+                        ? "Reversed"
+                        : isCompleted
                           ? "Completed"
                           : statusRaw || "Completed";
 
@@ -1039,7 +1056,13 @@ export default function AdminPage() {
                             {providerLabel} - {item.survey_id || "-"}
                           </td>
                           <td className="py-3 pr-3">
-                            <span className="rounded-full bg-emerald-500/20 px-2 py-1 text-xs font-bold text-emerald-300">
+                            <span
+                              className={`rounded-full px-2 py-1 text-xs font-bold ${
+                                isReversed
+                                  ? "bg-red-500/20 text-red-300"
+                                  : "bg-emerald-500/20 text-emerald-300"
+                              }`}
+                            >
                               {statusLabel}
                             </span>
                           </td>
