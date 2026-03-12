@@ -169,7 +169,10 @@ export default function AuthForm({
   const recaptchaWidgetIdRef = useRef<number | null>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isResendingVerification, setIsResendingVerification] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [verificationPendingEmail, setVerificationPendingEmail] = useState("");
   const [recaptchaToken, setRecaptchaToken] = useState("");
 
   function resetRecaptcha() {
@@ -242,6 +245,8 @@ export default function AuthForm({
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setErrorMessage("");
+    setSuccessMessage("");
+    setVerificationPendingEmail("");
 
     const formData = new FormData(event.currentTarget);
     const deviceId = getOrCreateDeviceId();
@@ -323,7 +328,31 @@ export default function AuthForm({
 
       const data = await response.json();
       if (!response.ok) {
+        if (data?.code === "EMAIL_NOT_VERIFIED") {
+          const pendingEmail = String(data?.email || payload.email || "")
+            .trim()
+            .toLowerCase();
+          if (pendingEmail) {
+            setVerificationPendingEmail(pendingEmail);
+          }
+        }
+
         setErrorMessage(data.message || "Authentication failed.");
+        resetRecaptcha();
+        return;
+      }
+
+      if (data?.requiresEmailVerification) {
+        const pendingEmail = String(data?.email || payload.email || "")
+          .trim()
+          .toLowerCase();
+        setVerificationPendingEmail(pendingEmail);
+        setSuccessMessage(
+          data?.message ||
+            "Account created. Please verify your email before logging in.",
+        );
+        event.currentTarget.reset();
+        setRecaptchaToken("");
         resetRecaptcha();
         return;
       }
@@ -341,6 +370,44 @@ export default function AuthForm({
       resetRecaptcha();
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleResendVerification() {
+    const normalizedEmail = String(verificationPendingEmail || "")
+      .trim()
+      .toLowerCase();
+    if (!normalizedEmail) {
+      setErrorMessage("Please enter your email first.");
+      return;
+    }
+
+    const apiBaseUrl = getApiBaseUrl();
+    try {
+      setIsResendingVerification(true);
+      setErrorMessage("");
+      const response = await fetch(`${apiBaseUrl}/api/auth/resend-verification`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: normalizedEmail }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        setErrorMessage(data?.message || "Could not resend verification email.");
+        return;
+      }
+
+      setSuccessMessage(
+        data?.message ||
+          "Verification email sent. If you do not see it, check your spam folder.",
+      );
+    } catch {
+      setErrorMessage("Could not connect to the server. Try again.");
+    } finally {
+      setIsResendingVerification(false);
     }
   }
 
@@ -615,6 +682,30 @@ export default function AuthForm({
           <p className="rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
             {errorMessage}
           </p>
+        ) : null}
+
+        {successMessage ? (
+          <p className="rounded-xl border border-emerald-400/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+            {successMessage}
+          </p>
+        ) : null}
+
+        {verificationPendingEmail ? (
+          <div className="rounded-2xl border border-cyan-300/30 bg-cyan-400/10 p-4">
+            <p className="text-sm text-cyan-100">
+              If you do not see the verification email, check your spam folder.
+            </p>
+            <button
+              type="button"
+              onClick={handleResendVerification}
+              disabled={isResendingVerification}
+              className="mt-3 cursor-pointer rounded-full border border-cyan-300 px-4 py-2 text-xs font-bold text-cyan-100 transition hover:bg-cyan-300 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {isResendingVerification
+                ? "Resending..."
+                : "Resend verification email"}
+            </button>
+          </div>
         ) : null}
 
         <button

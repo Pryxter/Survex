@@ -80,6 +80,13 @@ type AdminOverviewResponse = {
   message?: string;
 };
 
+type WithdrawalActionDialog =
+  | {
+      mode: "approved" | "rejected";
+      withdrawal: AdminWithdrawal;
+    }
+  | null;
+
 const ROWS_PER_PAGE = 6;
 
 function formatDate(value: string | null) {
@@ -150,6 +157,10 @@ export default function AdminPage() {
     number | null
   >(null);
   const [pendingTicketId, setPendingTicketId] = useState<number | null>(null);
+  const [withdrawalActionDialog, setWithdrawalActionDialog] =
+    useState<WithdrawalActionDialog>(null);
+  const [withdrawalActionInput, setWithdrawalActionInput] = useState("");
+  const [withdrawalActionError, setWithdrawalActionError] = useState("");
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [withdrawals, setWithdrawals] = useState<AdminWithdrawal[]>([]);
   const [tickets, setTickets] = useState<AdminTicket[]>([]);
@@ -393,34 +404,21 @@ export default function AdminPage() {
   async function handleWithdrawalStatusChange(
     withdrawal: AdminWithdrawal,
     nextStatus: "approved" | "rejected",
+    payoutReferenceInput = "",
   ) {
     const token = localStorage.getItem("survex_token");
     if (!token) {
       router.push("/login");
-      return;
+      return false;
     }
 
     setErrorMessage("");
     setStatusMessage("");
 
-    let payoutReference = "";
-    if (nextStatus === "approved") {
-      const promptValue = window.prompt(
-        "Enter Gift Card code or Transaction number:",
-        String(withdrawal.payout_reference || ""),
-      );
-
-      if (promptValue === null) {
-        return;
-      }
-
-      payoutReference = promptValue.trim();
-      if (!payoutReference) {
-        setErrorMessage(
-          "Gift Card code or transaction number is required to approve.",
-        );
-        return;
-      }
+    const payoutReference = String(payoutReferenceInput || "").trim();
+    if (nextStatus === "approved" && !payoutReference) {
+      setErrorMessage("Gift Card code or transaction number is required to approve.");
+      return false;
     }
 
     setPendingWithdrawalId(withdrawal.id);
@@ -466,12 +464,70 @@ export default function AdminPage() {
         ),
       );
       setStatusMessage(data.message || "Withdrawal status updated successfully.");
+      return true;
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : "Could not update withdrawal.",
       );
+      return false;
     } finally {
       setPendingWithdrawalId(null);
+    }
+  }
+
+  function openApproveWithdrawalDialog(withdrawal: AdminWithdrawal) {
+    setWithdrawalActionDialog({ mode: "approved", withdrawal });
+    setWithdrawalActionInput(String(withdrawal.payout_reference || ""));
+    setWithdrawalActionError("");
+    setErrorMessage("");
+    setStatusMessage("");
+  }
+
+  function openRejectWithdrawalDialog(withdrawal: AdminWithdrawal) {
+    setWithdrawalActionDialog({ mode: "rejected", withdrawal });
+    setWithdrawalActionInput("");
+    setWithdrawalActionError("");
+    setErrorMessage("");
+    setStatusMessage("");
+  }
+
+  function closeWithdrawalActionDialog() {
+    if (withdrawalActionDialog) {
+      const currentId = withdrawalActionDialog.withdrawal.id;
+      if (pendingWithdrawalId === currentId) {
+        return;
+      }
+    }
+
+    setWithdrawalActionDialog(null);
+    setWithdrawalActionInput("");
+    setWithdrawalActionError("");
+  }
+
+  async function submitWithdrawalActionDialog() {
+    if (!withdrawalActionDialog) {
+      return;
+    }
+
+    const { withdrawal, mode } = withdrawalActionDialog;
+    const payoutReference = String(withdrawalActionInput || "").trim();
+
+    if (mode === "approved" && !payoutReference) {
+      setWithdrawalActionError(
+        "Gift Card code or transaction number is required to approve.",
+      );
+      return;
+    }
+
+    setWithdrawalActionError("");
+    const success = await handleWithdrawalStatusChange(
+      withdrawal,
+      mode,
+      payoutReference,
+    );
+
+    if (success) {
+      closeWithdrawalActionDialog();
     }
   }
 
@@ -820,9 +876,7 @@ export default function AdminPage() {
                             <div className="flex items-center gap-2">
                               <button
                                 type="button"
-                                onClick={() =>
-                                  handleWithdrawalStatusChange(item, "approved")
-                                }
+                                onClick={() => openApproveWithdrawalDialog(item)}
                                 disabled={isBusy}
                                 className="rounded-full border border-emerald-400/40 bg-emerald-500/15 px-3 py-1.5 text-xs font-bold text-emerald-200 hover:bg-emerald-500/25 disabled:cursor-not-allowed disabled:opacity-60"
                               >
@@ -830,9 +884,7 @@ export default function AdminPage() {
                               </button>
                               <button
                                 type="button"
-                                onClick={() =>
-                                  handleWithdrawalStatusChange(item, "rejected")
-                                }
+                                onClick={() => openRejectWithdrawalDialog(item)}
                                 disabled={isBusy}
                                 className="rounded-full border border-red-400/40 bg-red-500/15 px-3 py-1.5 text-xs font-bold text-red-200 hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-60"
                               >
@@ -1078,6 +1130,92 @@ export default function AdminPage() {
             </>
           )}
         </section>
+
+        {withdrawalActionDialog ? (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4">
+            <div className="w-full max-w-lg rounded-2xl border border-white/10 bg-slate-900 p-6 shadow-2xl">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">
+                Withdrawal Request #{withdrawalActionDialog.withdrawal.id}
+              </p>
+              <h3 className="mt-2 text-2xl font-extrabold">
+                {withdrawalActionDialog.mode === "approved"
+                  ? "Approve Withdrawal"
+                  : "Reject Withdrawal"}
+              </h3>
+              <p className="mt-3 text-sm text-slate-300">
+                User: {withdrawalActionDialog.withdrawal.user_email || "Unknown user"} | Method:{" "}
+                {withdrawalActionDialog.withdrawal.reward_method} | Amount: ${" "}
+                {Number(withdrawalActionDialog.withdrawal.amount || 0).toFixed(2)}
+              </p>
+
+              {withdrawalActionDialog.mode === "approved" ? (
+                <div className="mt-5">
+                  <label
+                    htmlFor="withdrawalPayoutReference"
+                    className="mb-2 block text-sm font-semibold text-slate-200"
+                  >
+                    Gift Card code or Transaction number
+                  </label>
+                  <input
+                    id="withdrawalPayoutReference"
+                    type="text"
+                    value={withdrawalActionInput}
+                    onChange={(event) => {
+                      setWithdrawalActionInput(event.target.value);
+                      setWithdrawalActionError("");
+                    }}
+                    placeholder="Enter code or transaction ID"
+                    className="w-full rounded-xl border border-white/15 bg-slate-950/70 px-4 py-3 text-sm text-slate-100 outline-none ring-cyan-300 transition focus:ring-2"
+                  />
+                </div>
+              ) : (
+                <div className="mt-5 rounded-xl border border-amber-400/30 bg-amber-500/10 p-4">
+                  <p className="text-sm text-amber-100">
+                    Are you sure you want to reject this withdrawal request? The
+                    amount will be refunded to the user balance.
+                  </p>
+                </div>
+              )}
+
+              {withdrawalActionError ? (
+                <p className="mt-4 rounded-lg border border-red-400/40 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+                  {withdrawalActionError}
+                </p>
+              ) : null}
+
+              <div className="mt-6 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={closeWithdrawalActionDialog}
+                  disabled={
+                    pendingWithdrawalId === withdrawalActionDialog.withdrawal.id
+                  }
+                  className="rounded-full border border-white/20 px-4 py-2 text-xs font-bold text-slate-200 hover:border-slate-300/70 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={submitWithdrawalActionDialog}
+                  disabled={
+                    pendingWithdrawalId === withdrawalActionDialog.withdrawal.id
+                  }
+                  className={`rounded-full px-4 py-2 text-xs font-bold disabled:cursor-not-allowed disabled:opacity-60 ${
+                    withdrawalActionDialog.mode === "approved"
+                      ? "border border-emerald-400/40 bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25"
+                      : "border border-red-400/40 bg-red-500/15 text-red-200 hover:bg-red-500/25"
+                  }`}
+                >
+                  {pendingWithdrawalId === withdrawalActionDialog.withdrawal.id
+                    ? "Saving..."
+                    : withdrawalActionDialog.mode === "approved"
+                      ? "Confirm Approve"
+                      : "Confirm Reject"}
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
 
         <SiteFooter />
       </div>
