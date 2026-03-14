@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  applicationName: "Survex App",
+  applicationName: "Survex App – Earn Gift Cards by Completing Surveys",
   title: {
     default: "Survex App – Earn Gift Cards by Completing Surveys",
     template: "Survex - %s",

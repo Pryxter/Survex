@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { getApiBaseUrl } from "./api-base";
 
 type DashboardNavbarProps = {
-  activeTab?: "earn" | "rewards" | "profile" | "support" | "admin";
+  activeTab?: "earn" | "rewards" | "invite" | "profile" | "support" | "admin";
   balanceOverride?: string | number;
 };
 
@@ -31,7 +31,9 @@ export default function DashboardNavbar({
   const baseItemClass =
     "rounded-xl border px-4 py-2 text-sm font-semibold transition-colors";
 
-  const getItemClass = (tab: "earn" | "rewards" | "support" | "admin") =>
+  const getItemClass = (
+    tab: "earn" | "rewards" | "invite" | "support" | "admin",
+  ) =>
     `${baseItemClass} ${
       activeTab === tab
         ? "border-cyan-300/70 bg-cyan-400/10 text-cyan-200"
@@ -173,6 +175,9 @@ export default function DashboardNavbar({
             </Link>
             <Link href="/rewards" className={getItemClass("rewards")}>
               Rewards
+            </Link>
+            <Link href="/invite" className={getItemClass("invite")}>
+              Invite
             </Link>
             <Link href="/support" className={getItemClass("support")}>
               Support

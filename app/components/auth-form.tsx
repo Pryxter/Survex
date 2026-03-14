@@ -173,6 +173,7 @@ export default function AuthForm({
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [verificationPendingEmail, setVerificationPendingEmail] = useState("");
+  const [referralCodePrefill, setReferralCodePrefill] = useState("");
   const [recaptchaToken, setRecaptchaToken] = useState("");
 
   function resetRecaptcha() {
@@ -242,6 +243,28 @@ export default function AuthForm({
     };
   }, [recaptchaEnabled, recaptchaSiteKey]);
 
+  useEffect(() => {
+    if (mode !== "signup" || typeof window === "undefined") {
+      return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const referral = (
+      params.get("ref") ||
+      params.get("referral") ||
+      params.get("referralCode") ||
+      ""
+    )
+      .trim()
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, "")
+      .slice(0, 24);
+
+    if (referral) {
+      setReferralCodePrefill(referral);
+    }
+  }, [mode]);
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setErrorMessage("");
@@ -269,6 +292,9 @@ export default function AuthForm({
       zipCode: String(formData.get("zipCode") || "").trim(),
       age: String(formData.get("age") || "").trim(),
       gender: String(formData.get("gender") || "").trim(),
+      referralCode: String(formData.get("referralCode") || "")
+        .trim()
+        .toUpperCase(),
       email: String(formData.get("email") || "").trim(),
       password: String(formData.get("password") || ""),
       confirmPassword: String(formData.get("confirmPassword") || ""),
@@ -574,6 +600,24 @@ export default function AuthForm({
                   <option value="female">Female</option>
                 </select>
               </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor="referralCode"
+                className="mb-2 block text-sm font-medium"
+              >
+                Referral Code (optional)
+              </label>
+              <input
+                id="referralCode"
+                name="referralCode"
+                type="text"
+                defaultValue={referralCodePrefill}
+                maxLength={24}
+                className="w-full rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 uppercase outline-none ring-cyan-300 transition focus:ring-2"
+                placeholder="Enter referral code"
+              />
             </div>
           </>
         ) : null}
