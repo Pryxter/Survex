@@ -50,9 +50,24 @@ export default function SiteFooter({ className = "" }: SiteFooterProps) {
             Terms and Conditions
           </Link>
           <span className="text-slate-600">|</span>
-          <p className="text-slate-300 hover:text-cyan-200">
+          <Link href="/faq" className="text-slate-300 hover:text-cyan-200">
+            FAQ
+          </Link>
+          <span className="text-slate-600">|</span>
+          <Link href="/blog" className="text-slate-300 hover:text-cyan-200">
+            Blog
+          </Link>
+          <span className="text-slate-600">|</span>
+          <Link href="/contact" className="text-slate-300 hover:text-cyan-200">
+            Contact
+          </Link>
+          <span className="text-slate-600">|</span>
+          <a
+            href="mailto:Support@survex.app"
+            className="cursor-pointer text-slate-300 hover:text-cyan-200"
+          >
             Support@survex.app
-          </p>
+          </a>
         </div>
       </div>
 

@@ -57,7 +57,7 @@ export default function DashboardNavbar({
     toastTimerRef.current = setTimeout(() => {
       setRewardToastText("");
       toastTimerRef.current = null;
-    }, 3000);
+    }, 10000);
   }
 
   useEffect(() => {

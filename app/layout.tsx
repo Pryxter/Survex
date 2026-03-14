@@ -13,12 +13,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  applicationName: "Survex App",
   title: {
-    default: "Survex – Earn Gift Cards with Surveys & Offerwalls",
+    default: "Survex App – Earn Gift Cards by Completing Surveys",
     template: "Survex - %s",
+  },
+  openGraph: {
+    siteName: "Survex App",
   },
   icons: {
     icon: "/favicon.svg",
+    apple: "/apple-icon.png",
   },
   verification: {
     other: {

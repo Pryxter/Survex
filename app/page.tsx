@@ -71,9 +71,12 @@ export default function Home() {
               <a href="#rewards" className="hover:text-white">
                 Rewards
               </a>
-              <a href="#faq" className="hover:text-white">
+              <Link href="/faq" className="hover:text-white">
                 FAQ
-              </a>
+              </Link>
+              <Link href="/contact" className="hover:text-white">
+                Contact
+              </Link>
             </div>
             <div className="flex items-center gap-3">
               <Link
