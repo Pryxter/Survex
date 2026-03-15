@@ -87,6 +87,12 @@ type WithdrawalActionDialog =
     }
   | null;
 
+type ReminderActionDialog =
+  | {
+      user: AdminUser;
+    }
+  | null;
+
 const ROWS_PER_PAGE = 6;
 
 function formatDate(value: string | null) {
@@ -150,6 +156,9 @@ export default function AdminPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
   const [pendingUserId, setPendingUserId] = useState<number | null>(null);
+  const [pendingReminderUserId, setPendingReminderUserId] = useState<
+    number | null
+  >(null);
   const [pendingWithdrawalId, setPendingWithdrawalId] = useState<number | null>(
     null,
   );
@@ -159,6 +168,8 @@ export default function AdminPage() {
   const [pendingTicketId, setPendingTicketId] = useState<number | null>(null);
   const [withdrawalActionDialog, setWithdrawalActionDialog] =
     useState<WithdrawalActionDialog>(null);
+  const [reminderActionDialog, setReminderActionDialog] =
+    useState<ReminderActionDialog>(null);
   const [withdrawalActionInput, setWithdrawalActionInput] = useState("");
   const [withdrawalActionError, setWithdrawalActionError] = useState("");
   const [users, setUsers] = useState<AdminUser[]>([]);
@@ -398,6 +409,77 @@ export default function AdminPage() {
       );
     } finally {
       setPendingUserId(null);
+    }
+  }
+
+  async function handleSendSurveyReminder(user: AdminUser) {
+    const token = localStorage.getItem("survex_token");
+    if (!token) {
+      router.push("/login");
+      return false;
+    }
+
+    setErrorMessage("");
+    setStatusMessage("");
+    setPendingReminderUserId(user.id);
+
+    try {
+      const apiBaseUrl = getApiBaseUrl();
+      const response = await fetch(
+        `${apiBaseUrl}/api/admin/users/${user.id}/reminder`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const data = (await response.json()) as {
+        message?: string;
+      };
+
+      if (!response.ok) {
+        throw new Error(data.message || "Could not send reminder email.");
+      }
+
+      setStatusMessage(data.message || "Reminder email sent successfully.");
+      return true;
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Could not send reminder email.",
+      );
+      return false;
+    } finally {
+      setPendingReminderUserId(null);
+    }
+  }
+
+  function openReminderActionDialog(user: AdminUser) {
+    setReminderActionDialog({ user });
+    setErrorMessage("");
+    setStatusMessage("");
+  }
+
+  function closeReminderActionDialog() {
+    if (reminderActionDialog) {
+      const currentId = reminderActionDialog.user.id;
+      if (pendingReminderUserId === currentId) {
+        return;
+      }
+    }
+
+    setReminderActionDialog(null);
+  }
+
+  async function submitReminderActionDialog() {
+    if (!reminderActionDialog) {
+      return;
+    }
+
+    const success = await handleSendSurveyReminder(reminderActionDialog.user);
+    if (success) {
+      closeReminderActionDialog();
     }
   }
 
@@ -793,24 +875,44 @@ export default function AdminPage() {
                           <td className="py-3 pr-3">{user.last_login_city || "-"}</td>
                           <td className="py-3 pr-3">{formatDate(user.created_at)}</td>
                           <td className="py-3 pr-3">
-                            <button
-                              type="button"
-                              disabled={pendingUserId === user.id || isOwner}
-                              onClick={() => handleToggleBan(user)}
-                              className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${
-                                user.is_banned
-                                  ? "border border-emerald-400/40 bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25"
-                                  : "border border-red-400/40 bg-red-500/15 text-red-200 hover:bg-red-500/25"
-                              } disabled:cursor-not-allowed disabled:opacity-60`}
-                            >
-                              {isOwner
-                                ? "Protected"
-                                : pendingUserId === user.id
-                                  ? "Saving..."
-                                  : user.is_banned
-                                    ? "Unban"
-                                    : "Ban"}
-                            </button>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <button
+                                type="button"
+                                disabled={
+                                  pendingUserId === user.id ||
+                                  pendingReminderUserId === user.id ||
+                                  isOwner
+                                }
+                                onClick={() => handleToggleBan(user)}
+                                className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${
+                                  user.is_banned
+                                    ? "border border-emerald-400/40 bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25"
+                                    : "border border-red-400/40 bg-red-500/15 text-red-200 hover:bg-red-500/25"
+                                } disabled:cursor-not-allowed disabled:opacity-60`}
+                              >
+                                {isOwner
+                                  ? "Protected"
+                                  : pendingUserId === user.id
+                                    ? "Saving..."
+                                    : user.is_banned
+                                      ? "Unban"
+                                      : "Ban"}
+                              </button>
+                              <button
+                                type="button"
+                                disabled={
+                                  pendingReminderUserId === user.id ||
+                                  pendingUserId === user.id ||
+                                  user.is_banned
+                                }
+                                onClick={() => openReminderActionDialog(user)}
+                                className="rounded-full border border-cyan-400/40 bg-cyan-500/15 px-3 py-1.5 text-xs font-bold text-cyan-200 transition hover:bg-cyan-500/25 disabled:cursor-not-allowed disabled:opacity-60"
+                              >
+                                {pendingReminderUserId === user.id
+                                  ? "Sending..."
+                                  : "Send Reminder"}
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       );
@@ -1234,6 +1336,65 @@ export default function AdminPage() {
                     : withdrawalActionDialog.mode === "approved"
                       ? "Confirm Approve"
                       : "Confirm Reject"}
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {reminderActionDialog ? (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4">
+            <div className="w-full max-w-lg rounded-2xl border border-white/10 bg-slate-900 p-6 shadow-2xl">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">
+                User Reminder
+              </p>
+              <h3 className="mt-2 text-2xl font-extrabold">Send Survey Reminder</h3>
+              <p className="mt-3 text-sm text-slate-300">
+                Send a friendly reminder email to{" "}
+                <span className="font-semibold text-slate-100">
+                  {reminderActionDialog.user.email}
+                </span>{" "}
+                to encourage survey activity.
+              </p>
+
+              <div className="mt-5 rounded-xl border border-cyan-400/30 bg-cyan-500/10 p-4">
+                <p className="text-sm text-cyan-100">
+                  User:{" "}
+                  <span className="font-semibold">
+                    {[
+                      reminderActionDialog.user.first_name,
+                      reminderActionDialog.user.last_name,
+                    ]
+                      .filter(Boolean)
+                      .join(" ") || "No name"}
+                  </span>
+                </p>
+                <p className="mt-1 text-sm text-cyan-100">
+                  Current balance:{" "}
+                  <span className="font-semibold">
+                    $ {Number(reminderActionDialog.user.balance || 0).toFixed(2)}
+                  </span>
+                </p>
+              </div>
+
+              <div className="mt-6 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={closeReminderActionDialog}
+                  disabled={pendingReminderUserId === reminderActionDialog.user.id}
+                  className="rounded-full border border-white/20 px-4 py-2 text-xs font-bold text-slate-200 hover:border-slate-300/70 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={submitReminderActionDialog}
+                  disabled={pendingReminderUserId === reminderActionDialog.user.id}
+                  className="rounded-full border border-cyan-400/40 bg-cyan-500/15 px-4 py-2 text-xs font-bold text-cyan-200 hover:bg-cyan-500/25 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {pendingReminderUserId === reminderActionDialog.user.id
+                    ? "Sending..."
+                    : "Confirm Send"}
                 </button>
               </div>
             </div>

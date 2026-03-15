@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     template: "Survex - %s",
   },
   openGraph: {
-    siteName: "Survex App",
+    siteName: "Survex App – Earn Gift Cards by Completing Surveys",
   },
   icons: {
     icon: "/favicon.svg",
