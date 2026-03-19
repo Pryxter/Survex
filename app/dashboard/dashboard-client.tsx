@@ -22,7 +22,7 @@ const surveyWalls = [
   },
   {
     name: "InBrain.ai",
-    image: "/survey-walls/inbrain.svg",
+    image: "/survey-walls/Inbrain.svg",
     alt: "InBrain.ai visual",
     href: "/InBrain",
   },
@@ -71,8 +71,8 @@ export default function DashboardClient() {
               Start earning with premium partners
             </h1>
             <p className="mt-3 max-w-2xl text-slate-300">
-              Choose a survey wall and complete available offers to increase your
-              balance.
+              Choose a survey wall and complete available offers to increase
+              your balance.
             </p>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
