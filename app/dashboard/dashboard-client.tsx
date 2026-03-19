@@ -20,6 +20,12 @@ const surveyWalls = [
     alt: "TheoremReach visual",
     href: "/TheoremReach",
   },
+  {
+    name: "InBrain.ai",
+    image: "/survey-walls/inbrain.svg",
+    alt: "InBrain.ai visual",
+    href: "/InBrain",
+  },
 ];
 
 export default function DashboardClient() {

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { getApiBaseUrl } from "./api-base";
 
 type DashboardNavbarProps = {
@@ -22,14 +22,18 @@ export default function DashboardNavbar({
   balanceOverride,
 }: DashboardNavbarProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [balance, setBalance] = useState("0.00");
   const [userRole, setUserRole] = useState("user");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [rewardToastText, setRewardToastText] = useState("");
   const lastKnownBalanceRef = useRef<number | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const baseItemClass =
     "rounded-xl border px-4 py-2 text-sm font-semibold transition-colors";
+  const mobileBaseItemClass =
+    "block w-full min-w-0 rounded-xl border px-4 py-2 text-left text-sm font-semibold transition-colors";
 
   const getItemClass = (
     tab: "earn" | "rewards" | "invite" | "support" | "admin",
@@ -39,9 +43,22 @@ export default function DashboardNavbar({
         ? "border-cyan-300/70 bg-cyan-400/10 text-cyan-200"
         : "border-white/10 bg-white/5 hover:border-cyan-300/60 hover:text-cyan-200"
     }`;
+  const getMobileItemClass = (
+    tab: "earn" | "rewards" | "invite" | "support" | "admin",
+  ) =>
+    `${mobileBaseItemClass} ${
+      activeTab === tab
+        ? "border-cyan-300/70 bg-cyan-400/10 text-cyan-200"
+        : "border-white/10 bg-white/5 hover:border-cyan-300/60 hover:text-cyan-200"
+    }`;
 
   const profileClass =
     "rounded-xl border px-4 py-2 text-sm font-semibold transition-colors " +
+    (activeTab === "profile"
+      ? "border-cyan-300/70 bg-cyan-400/10 text-cyan-200"
+      : "border-white/15 bg-white/5 hover:border-cyan-300/60 hover:text-cyan-200");
+  const mobileProfileClass =
+    "block w-full min-w-0 rounded-xl border px-4 py-2 text-left text-sm font-semibold transition-colors " +
     (activeTab === "profile"
       ? "border-cyan-300/70 bg-cyan-400/10 text-cyan-200"
       : "border-white/15 bg-white/5 hover:border-cyan-300/60 hover:text-cyan-200");
@@ -151,9 +168,14 @@ export default function DashboardNavbar({
       : Number(balanceOverride || 0).toFixed(2);
   const canAccessAdmin = userRole === "owner" || userRole === "admin";
 
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
+
   function handleLogout() {
     localStorage.removeItem("survex_token");
     localStorage.removeItem("survex_user");
+    setIsMobileMenuOpen(false);
     router.push("/login");
   }
 
@@ -165,7 +187,80 @@ export default function DashboardNavbar({
         </div>
       ) : null}
       <header className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 md:p-5">
-        <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex min-w-0 items-center justify-between gap-3 md:hidden">
+          <p className="truncate pr-1 text-xl font-black tracking-tight sm:text-2xl">
+            SURVEX<span className="text-cyan-300">.app</span>
+          </p>
+          <div className="flex items-center gap-2">
+            <div className="shrink-0 rounded-xl border border-emerald-300/40 bg-emerald-500/20 px-3 py-2 text-xs font-bold text-emerald-200">
+              $ {displayBalance}
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen((previous) => !previous)}
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-slate-100 transition hover:border-cyan-300/60 hover:text-cyan-200"
+              aria-label="Toggle menu"
+              aria-expanded={isMobileMenuOpen}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                {isMobileMenuOpen ? (
+                  <path d="M6 6l12 12M18 6L6 18" />
+                ) : (
+                  <path d="M3 6h18M3 12h18M3 18h18" />
+                )}
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div
+          aria-hidden={!isMobileMenuOpen}
+          className={`overflow-hidden transition-[max-height,opacity,margin] duration-300 ease-out md:hidden ${
+            isMobileMenuOpen
+              ? "visible mt-4 max-h-[34rem] opacity-100"
+              : "invisible mt-0 max-h-0 opacity-0"
+          }`}
+        >
+          <div className="space-y-3 overflow-x-hidden rounded-2xl border border-white/10 bg-slate-950/50 p-3">
+            <Link href="/dashboard" className={getMobileItemClass("earn")}>
+              Earn
+            </Link>
+            <Link href="/rewards" className={getMobileItemClass("rewards")}>
+              Rewards
+            </Link>
+            <Link href="/invite" className={getMobileItemClass("invite")}>
+              Invite
+            </Link>
+            <Link href="/support" className={getMobileItemClass("support")}>
+              Support
+            </Link>
+            {canAccessAdmin ? (
+              <Link href="/admin" className={getMobileItemClass("admin")}>
+                Admin
+              </Link>
+            ) : null}
+            <Link href="/profile" className={mobileProfileClass}>
+              My Profile
+            </Link>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="w-full rounded-xl border border-red-400/40 bg-red-500/15 px-4 py-2 text-sm font-semibold text-red-300 transition hover:border-red-300 hover:text-red-200"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+
+        <div className="hidden items-center justify-between gap-4 md:flex">
           <div className="flex flex-wrap items-center gap-3">
             <p className="mr-1 text-2xl font-black tracking-tight">
               SURVEX<span className="text-cyan-300">.app</span>
@@ -184,7 +279,7 @@ export default function DashboardNavbar({
             </Link>
             {canAccessAdmin ? (
               <Link href="/admin" className={getItemClass("admin")}>
-                Admin
+              Admin
               </Link>
             ) : null}
           </div>
