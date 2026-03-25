@@ -372,14 +372,13 @@ export default function AuthForm({
         const pendingEmail = String(data?.email || payload.email || "")
           .trim()
           .toLowerCase();
-        setVerificationPendingEmail(pendingEmail);
-        setSuccessMessage(
-          data?.message ||
-            "Account created. Please verify your email before logging in.",
-        );
-        event.currentTarget.reset();
-        setRecaptchaToken("");
-        resetRecaptcha();
+        if (pendingEmail) {
+          localStorage.setItem("survex_pending_verification_email", pendingEmail);
+          router.push(`/confirm-email?email=${encodeURIComponent(pendingEmail)}`);
+          return;
+        }
+
+        router.push("/confirm-email");
         return;
       }
 
@@ -412,17 +411,22 @@ export default function AuthForm({
     try {
       setIsResendingVerification(true);
       setErrorMessage("");
-      const response = await fetch(`${apiBaseUrl}/api/auth/resend-verification`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${apiBaseUrl}/api/auth/resend-verification`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: normalizedEmail }),
         },
-        body: JSON.stringify({ email: normalizedEmail }),
-      });
+      );
 
       const data = await response.json();
       if (!response.ok) {
-        setErrorMessage(data?.message || "Could not resend verification email.");
+        setErrorMessage(
+          data?.message || "Could not resend verification email.",
+        );
         return;
       }
 
@@ -649,6 +653,16 @@ export default function AuthForm({
             className="w-full rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 outline-none ring-cyan-300 transition focus:ring-2"
             placeholder="Minimum 8 characters"
           />
+          {mode === "login" ? (
+            <div className="mt-3 text-right">
+              <Link
+                href="/forgot-password"
+                className="text-xs font-semibold text-cyan-300 transition hover:text-cyan-200"
+              >
+                Forgot your password?
+              </Link>
+            </div>
+          ) : null}
         </div>
 
         {showConfirmPassword ? (
@@ -759,6 +773,18 @@ export default function AuthForm({
         >
           {isSubmitting ? "Please wait..." : submitLabel}
         </button>
+
+        {mode === "login" ? (
+          <p className="text-center text-sm text-slate-300">
+            Don&apos;t have an account?{" "}
+            <Link
+              href="/signup"
+              className="font-semibold text-cyan-300 transition hover:text-cyan-200"
+            >
+              Sign up
+            </Link>
+          </p>
+        ) : null}
       </form>
     </section>
   );

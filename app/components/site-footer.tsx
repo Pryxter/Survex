@@ -5,22 +5,22 @@ const socialLinks = [
   {
     name: "Facebook",
     short: "/Facebook.svg",
-    urlx: "https://www.facebook.com/Survex/",
+    urlx: "https://www.facebook.com/survexapp/",
   },
   {
     name: "Instagram",
     short: "/Instagram.svg",
-    urlx: "https://www.instagram.com/Survex/",
+    urlx: "https://www.instagram.com/survexapp/",
   },
   {
     name: "YouTube",
     short: "/Youtube.svg",
-    urlx: "https://www.youtube.com/Survex/",
+    urlx: "https://www.youtube.com/@Survexapp",
   },
   {
     name: "TikTok",
     short: "/TikTok.svg",
-    urlx: "https://www.tiktok.com/Survex/",
+    urlx: "https://www.tiktok.com/Survexapp/",
   },
 ];
 
