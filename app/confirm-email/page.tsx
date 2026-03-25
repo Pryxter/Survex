@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import ConfirmEmailClient from "./confirm-email-client";
 import SiteFooter from "../components/site-footer";
 
@@ -18,7 +19,23 @@ export default function ConfirmEmailPage() {
           Back to Login
         </Link>
 
-        <ConfirmEmailClient />
+        <Suspense
+          fallback={
+            <section className="rounded-3xl border border-cyan-300/30 bg-white/[0.04] p-6 shadow-2xl backdrop-blur md:p-8">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">
+                One Last Step
+              </p>
+              <h1 className="mt-2 text-3xl font-extrabold md:text-4xl">
+                Confirm your email to activate your account
+              </h1>
+              <p className="mt-6 rounded-xl border border-cyan-400/30 bg-cyan-500/10 px-4 py-3 text-sm text-cyan-100">
+                Loading confirmation details...
+              </p>
+            </section>
+          }
+        >
+          <ConfirmEmailClient />
+        </Suspense>
       </main>
       <div className="mx-auto w-full max-w-2xl">
         <SiteFooter />
