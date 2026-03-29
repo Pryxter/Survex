@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import CookieConsentBanner from "./components/cookie-consent-banner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   // applicationName: "Survex App – Earn Gift Cards by Completing Surveys",
   title: {
-    default: "Survex App – Earn Gift Cards by Completing Surveys",
+    default: "Survex App - Earn Gift Cards by Completing Surveys",
     template: "Survex - %s",
   },
   // openGraph: {
@@ -45,6 +46,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <CookieConsentBanner />
       </body>
     </html>
   );

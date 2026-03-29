@@ -12,7 +12,7 @@ export default function ContactPage() {
       <main className="mx-auto w-full max-w-5xl px-6 py-12 md:px-10">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <p className="text-xl font-black tracking-tight">
-            SURVEX<span className="text-cyan-300">.app</span>
+            SURV<span className="text-cyan-300">EX</span>
           </p>
           <Link
             href="/"

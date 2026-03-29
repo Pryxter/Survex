@@ -1120,8 +1120,11 @@ export default function AdminPage() {
                       const normalizedSource = String(item.source || "")
                         .trim()
                         .toLowerCase();
+                      const isGift = normalizedSource === "survex_bonus";
                       const providerLabel =
-                        normalizedSource === "bitlabs"
+                        normalizedSource === "survex_bonus"
+                          ? "Survex Gift"
+                          : normalizedSource === "bitlabs"
                           ? "BitLabs"
                           : normalizedSource === "cpx"
                             ? "CPX Research"
@@ -1141,7 +1144,9 @@ export default function AdminPage() {
                         "complete",
                         "credited",
                       ].includes(normalizedStatus);
-                      const statusLabel = isReversed
+                      const statusLabel = isGift
+                        ? "Gift"
+                        : isReversed
                         ? "Reversed"
                         : isCompleted
                           ? "Completed"
@@ -1160,7 +1165,9 @@ export default function AdminPage() {
                           <td className="py-3 pr-3">
                             <span
                               className={`rounded-full px-2 py-1 text-xs font-bold ${
-                                isReversed
+                                isGift
+                                  ? "bg-cyan-500/20 text-cyan-200"
+                                  : isReversed
                                   ? "bg-red-500/20 text-red-300"
                                   : "bg-emerald-500/20 text-emerald-300"
                               }`}

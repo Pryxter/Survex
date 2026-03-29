@@ -56,7 +56,7 @@ export default function ForgotPasswordClient() {
       </p>
 
       <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
-        <div>
+        <div className="relative">
           <label htmlFor="email" className="mb-2 block text-sm font-medium">
             Email
           </label>
@@ -67,9 +67,21 @@ export default function ForgotPasswordClient() {
             required
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="w-full rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 outline-none ring-cyan-300 transition focus:ring-2"
+            className="persist-focus w-full rounded-xl border border-white/15 bg-slate-900/80 py-3 pl-10 pr-4 outline-none ring-cyan-300 transition focus:ring-2"
             placeholder="you@example.com"
           />
+          <span className="pointer-events-none absolute left-3 top-[52px] z-10 -translate-y-1/2 text-cyan-200">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              className="h-5 w-5"
+            >
+              <rect x="3" y="5" width="18" height="14" rx="2" />
+              <path d="m4 7 8 6 8-6" />
+            </svg>
+          </span>
         </div>
 
         {errorMessage ? (

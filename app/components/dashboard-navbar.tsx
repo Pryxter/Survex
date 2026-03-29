@@ -3,6 +3,15 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import {
+  Wallet,
+  Gift,
+  Users,
+  LifeBuoy,
+  Shield,
+  UserRound,
+  LogOut,
+} from "lucide-react";
 import { getApiBaseUrl } from "./api-base";
 
 type DashboardNavbarProps = {
@@ -62,6 +71,7 @@ export default function DashboardNavbar({
     (activeTab === "profile"
       ? "border-cyan-300/70 bg-cyan-400/10 text-cyan-200"
       : "border-white/15 bg-white/5 hover:border-cyan-300/60 hover:text-cyan-200");
+  const navIconClass = "h-4 w-4 shrink-0";
 
   function showRewardToast(deltaAmount: number) {
     const normalized = Number(deltaAmount || 0);
@@ -187,10 +197,13 @@ export default function DashboardNavbar({
         </div>
       ) : null}
       <header className="rounded-2xl border border-white/10 bg-slate-900/70 p-4 md:p-5">
-        <div className="flex min-w-0 items-center justify-between gap-3 md:hidden">
-          <p className="truncate pr-1 text-xl font-black tracking-tight sm:text-2xl">
-            SURVEX<span className="text-cyan-300">.app</span>
-          </p>
+          <div className="flex min-w-0 items-center justify-between gap-3 md:hidden">
+            <Link
+              href="/dashboard"
+              className="truncate pr-1 text-xl font-black tracking-tight sm:text-2xl cursor-pointer"
+            >
+              SURV<span className="brand-breathe text-cyan-300">EX</span>
+            </Link>
           <div className="flex items-center gap-2">
             <div className="shrink-0 rounded-xl border border-emerald-300/40 bg-emerald-500/20 px-3 py-2 text-xs font-bold text-emerald-200">
               $ {displayBalance}
@@ -231,55 +244,92 @@ export default function DashboardNavbar({
         >
           <div className="space-y-3 overflow-x-hidden rounded-2xl border border-white/10 bg-slate-950/50 p-3">
             <Link href="/dashboard" className={getMobileItemClass("earn")}>
-              Earn
+              <span className="inline-flex items-center gap-2">
+                <Wallet className={navIconClass} />
+                Earn
+              </span>
             </Link>
             <Link href="/rewards" className={getMobileItemClass("rewards")}>
-              Rewards
+              <span className="inline-flex items-center gap-2">
+                <Gift className={navIconClass} />
+                Rewards
+              </span>
             </Link>
             <Link href="/invite" className={getMobileItemClass("invite")}>
-              Invite
+              <span className="inline-flex items-center gap-2">
+                <Users className={navIconClass} />
+                Invite
+              </span>
             </Link>
             <Link href="/support" className={getMobileItemClass("support")}>
-              Support
+              <span className="inline-flex items-center gap-2">
+                <LifeBuoy className={navIconClass} />
+                Support
+              </span>
             </Link>
             {canAccessAdmin ? (
               <Link href="/admin" className={getMobileItemClass("admin")}>
-                Admin
+                <span className="inline-flex items-center gap-2">
+                  <Shield className={navIconClass} />
+                  Admin
+                </span>
               </Link>
             ) : null}
             <Link href="/profile" className={mobileProfileClass}>
-              My Profile
+              <span className="inline-flex items-center gap-2">
+                <UserRound className={navIconClass} />
+                My Profile
+              </span>
             </Link>
             <button
               type="button"
               onClick={handleLogout}
-              className="w-full rounded-xl border border-red-400/40 bg-red-500/15 px-4 py-2 text-sm font-semibold text-red-300 transition hover:border-red-300 hover:text-red-200"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-red-400/40 bg-red-500/15 px-4 py-2 text-sm font-semibold text-red-300 transition hover:border-red-300 hover:text-red-200"
             >
+              <LogOut className={navIconClass} />
               Logout
             </button>
           </div>
         </div>
 
         <div className="hidden items-center justify-between gap-4 md:flex">
-          <div className="flex flex-wrap items-center gap-3">
-            <p className="mr-1 text-2xl font-black tracking-tight">
-              SURVEX<span className="text-cyan-300">.app</span>
-            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href="/dashboard"
+                className="mr-1 cursor-pointer text-2xl font-black tracking-tight"
+              >
+                SURV<span className="brand-breathe text-cyan-300">EX</span>
+              </Link>
             <Link href="/dashboard" className={getItemClass("earn")}>
-              Earn
+              <span className="inline-flex items-center gap-2">
+                <Wallet className={navIconClass} />
+                Earn
+              </span>
             </Link>
             <Link href="/rewards" className={getItemClass("rewards")}>
-              Rewards
+              <span className="inline-flex items-center gap-2">
+                <Gift className={navIconClass} />
+                Rewards
+              </span>
             </Link>
             <Link href="/invite" className={getItemClass("invite")}>
-              Invite
+              <span className="inline-flex items-center gap-2">
+                <Users className={navIconClass} />
+                Invite
+              </span>
             </Link>
             <Link href="/support" className={getItemClass("support")}>
-              Support
+              <span className="inline-flex items-center gap-2">
+                <LifeBuoy className={navIconClass} />
+                Support
+              </span>
             </Link>
             {canAccessAdmin ? (
               <Link href="/admin" className={getItemClass("admin")}>
-              Admin
+                <span className="inline-flex items-center gap-2">
+                  <Shield className={navIconClass} />
+                  Admin
+                </span>
               </Link>
             ) : null}
           </div>
@@ -289,13 +339,17 @@ export default function DashboardNavbar({
               $ {displayBalance}
             </div>
             <Link href="/profile" className={profileClass}>
-              My Profile
+              <span className="inline-flex items-center gap-2">
+                <UserRound className={navIconClass} />
+                My Profile
+              </span>
             </Link>
             <button
               type="button"
               onClick={handleLogout}
-              className="rounded-xl border border-red-400/40 bg-red-500/15 px-4 py-2 text-sm font-semibold text-red-300 hover:border-red-300 hover:text-red-200"
+              className="inline-flex items-center gap-2 rounded-xl border border-red-400/40 bg-red-500/15 px-4 py-2 text-sm font-semibold text-red-300 hover:border-red-300 hover:text-red-200"
             >
+              <LogOut className={navIconClass} />
               Logout
             </button>
           </div>

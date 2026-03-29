@@ -60,6 +60,40 @@ body {
   animation: rgbBorderShift 7s ease-in-out infinite;
 }
 
+@keyframes brandBreathing {
+  0%,
+  100% {
+    opacity: 0.5;
+    text-shadow: 0 0 6px rgba(103, 232, 249, 0.4);
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 12px rgba(103, 232, 249, 0.8);
+  }
+}
+
+.brand-breathe {
+  display: inline-block;
+  animation: brandBreathing 4.8s ease-in-out infinite;
+  will-change: opacity;
+}
+
+@keyframes textBreathingFade {
+  0%,
+  100% {
+    opacity: 0.58;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.text-breathe-fade {
+  display: inline-block;
+  animation: textBreathingFade 3.8s ease-in-out infinite;
+  will-change: opacity;
+}
+
 button,
 select,
 summary,
@@ -77,4 +111,50 @@ button:disabled,
 select:disabled,
 input:disabled {
   cursor: not-allowed;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+textarea:-webkit-autofill:active,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus,
+select:-webkit-autofill:active {
+  -webkit-text-fill-color: #e2e8f0;
+  caret-color: #e2e8f0;
+  -webkit-box-shadow: 0 0 0 1000px #0f172a inset;
+  box-shadow: 0 0 0 1000px #0f172a inset;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+input.persist-focus:not(:placeholder-shown),
+textarea.persist-focus:not(:placeholder-shown),
+input.persist-focus:-webkit-autofill,
+input.persist-focus:-webkit-autofill:hover,
+input.persist-focus:-webkit-autofill:focus,
+textarea.persist-focus:-webkit-autofill,
+textarea.persist-focus:-webkit-autofill:hover,
+textarea.persist-focus:-webkit-autofill:focus,
+select.persist-focus:valid {
+  border-color: rgb(103 232 249 / 0.9) !important;
+  box-shadow:
+    0 0 0 1px rgb(103 232 249 / 0.65),
+    0 0 10px rgb(103 232 249 / 0.18) !important;
+}
+
+input.persist-focus:-webkit-autofill,
+input.persist-focus:-webkit-autofill:hover,
+input.persist-focus:-webkit-autofill:focus,
+textarea.persist-focus:-webkit-autofill,
+textarea.persist-focus:-webkit-autofill:hover,
+textarea.persist-focus:-webkit-autofill:focus {
+  box-shadow:
+    0 0 0 1px rgb(103 232 249 / 0.65),
+    0 0 10px rgb(103 232 249 / 0.18),
+    0 0 0 1000px #0f172a inset !important;
 }

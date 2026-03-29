@@ -13,14 +13,14 @@ export default function SignupPage() {
       <main className="mx-auto w-full max-w-2xl">
         <Link
           href="/"
-          className="mb-8 inline-block text-sm font-semibold text-cyan-300 hover:text-cyan-200"
+          className="mb-8 inline-flex items-center rounded-full border border-cyan-300/60 bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-300 transition hover:bg-cyan-500/20 hover:text-cyan-200"
         >
           Back to Home
         </Link>
 
         <AuthForm
           mode="signup"
-          title="Sign Up"
+          title="Survex"
           subtitle="Create your account and start receiving paid survey invitations."
           submitLabel="Create Account"
         />

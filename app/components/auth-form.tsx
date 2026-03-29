@@ -32,6 +32,17 @@ type AuthFormProps = {
   showPrivacyConsent?: boolean;
 };
 
+type FieldIconName =
+  | "user"
+  | "home"
+  | "building"
+  | "globe"
+  | "mail"
+  | "mapPin"
+  | "hash"
+  | "gift"
+  | "lock";
+
 const DEVICE_ID_STORAGE_KEY = "survex_device_id";
 const COUNTRY_OPTIONS: Array<{ code: string; name: string }> = [
   { code: "US", name: "United States" },
@@ -94,6 +105,88 @@ const COUNTRY_OPTIONS: Array<{ code: string; name: string }> = [
   { code: "HU", name: "Hungary" },
   { code: "GR", name: "Greece" },
 ];
+
+function FieldIcon({ name }: { name: FieldIconName }) {
+  const className = "h-5 w-5";
+
+  if (name === "user") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className}>
+        <path d="M20 21a8 8 0 0 0-16 0" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+    );
+  }
+
+  if (name === "home") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className}>
+        <path d="m3 10 9-7 9 7" />
+        <path d="M5 10v10h14V10" />
+      </svg>
+    );
+  }
+
+  if (name === "building") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className}>
+        <rect x="4" y="3" width="16" height="18" rx="2" />
+        <path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1" />
+      </svg>
+    );
+  }
+
+  if (name === "globe") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className}>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" />
+      </svg>
+    );
+  }
+
+  if (name === "mail") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className}>
+        <rect x="3" y="5" width="18" height="14" rx="2" />
+        <path d="m4 7 8 6 8-6" />
+      </svg>
+    );
+  }
+
+  if (name === "mapPin") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className}>
+        <path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z" />
+        <circle cx="12" cy="10" r="2.5" />
+      </svg>
+    );
+  }
+
+  if (name === "hash") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className}>
+        <path d="M9 3 7 21M17 3l-2 18M4 9h18M3 15h18" />
+      </svg>
+    );
+  }
+
+  if (name === "gift") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className}>
+        <rect x="3" y="8" width="18" height="13" rx="2" />
+        <path d="M12 8v13M3 12h18M12 8c-1.8 0-4-1-4-3a2 2 0 0 1 4 0M12 8c1.8 0 4-1 4-3a2 2 0 0 0-4 0" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className}>
+      <rect x="4" y="11" width="16" height="10" rx="2" />
+      <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+    </svg>
+  );
+}
 
 function generateDeviceId() {
   if (typeof window !== "undefined" && window.crypto?.randomUUID) {
@@ -162,6 +255,8 @@ export default function AuthForm({
   showConfirmPassword = true,
   showPrivacyConsent = true,
 }: AuthFormProps) {
+  const isLoginMode = mode === "login";
+  const isBrandTitle = String(title || "").trim().toLowerCase() === "survex";
   const router = useRouter();
   const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "";
   const recaptchaEnabled = mode === "signup" && Boolean(recaptchaSiteKey);
@@ -443,115 +538,145 @@ export default function AuthForm({
 
   return (
     <section className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur md:p-8">
-      <h1 className="text-3xl font-extrabold md:text-4xl">{title}</h1>
-      <p className="mt-3 text-slate-300">{subtitle}</p>
+      {isLoginMode ? (
+        <p className="text-center text-5xl font-black tracking-tight text-slate-100 md:text-6xl">
+          Surv<span className="text-cyan-300">e</span>
+          <span className="text-cyan-300">x</span>
+        </p>
+      ) : null}
+      <h1
+        className={`font-extrabold ${
+          isBrandTitle
+            ? "text-center text-5xl font-black tracking-tight text-slate-100 md:text-6xl"
+            : isLoginMode
+              ? "mt-2 text-center text-2xl md:text-3xl"
+              : "text-3xl md:text-4xl"
+        }`}
+      >
+        {isBrandTitle ? (
+          <>
+            Surv<span className="text-cyan-300">e</span>
+            <span className="text-cyan-300">x</span>
+          </>
+        ) : (
+          title
+        )}
+      </h1>
+      <p className={`mt-3 text-slate-300 ${(isLoginMode || isBrandTitle) ? "text-center" : ""}`}>{subtitle}</p>
 
       <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
         {mode === "signup" ? (
           <>
             <div className="grid gap-5 md:grid-cols-2">
-              <div>
+              <div className="relative">
                 <label
                   htmlFor="firstName"
                   className="mb-2 block text-sm font-medium"
-                >
-                  First Name
+                >                  First Name
                 </label>
                 <input
                   id="firstName"
                   name="firstName"
                   type="text"
                   required
-                  className="w-full rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 outline-none ring-cyan-300 transition focus:ring-2"
+                  className="persist-focus w-full rounded-xl border border-white/15 bg-slate-900/80 py-3 pl-10 pr-4 outline-none ring-cyan-300 transition focus:ring-2"
                   placeholder="First name"
                 />
+                <span className="pointer-events-none absolute left-3 top-[52px] z-10 -translate-y-1/2 text-cyan-200">
+                  <FieldIcon name="user" />
+                </span>
               </div>
-              <div>
+              <div className="relative">
                 <label
                   htmlFor="lastName"
                   className="mb-2 block text-sm font-medium"
-                >
-                  Last Name
+                >                  Last Name
                 </label>
                 <input
                   id="lastName"
                   name="lastName"
                   type="text"
                   required
-                  className="w-full rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 outline-none ring-cyan-300 transition focus:ring-2"
+                  className="persist-focus w-full rounded-xl border border-white/15 bg-slate-900/80 py-3 pl-10 pr-4 outline-none ring-cyan-300 transition focus:ring-2"
                   placeholder="Last name"
                 />
+                <span className="pointer-events-none absolute left-3 top-[52px] z-10 -translate-y-1/2 text-cyan-200">
+                  <FieldIcon name="user" />
+                </span>
               </div>
             </div>
 
-            <div>
+            <div className="relative">
               <label
                 htmlFor="addressLine1"
                 className="mb-2 block text-sm font-medium"
-              >
-                Your address (line 1):
+              >                Your address (line 1):
               </label>
               <input
                 id="addressLine1"
                 name="addressLine1"
                 type="text"
                 required
-                className="w-full rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 outline-none ring-cyan-300 transition focus:ring-2"
+                className="persist-focus w-full rounded-xl border border-white/15 bg-slate-900/80 py-3 pl-10 pr-4 outline-none ring-cyan-300 transition focus:ring-2"
                 placeholder="Street and number"
               />
+              <span className="pointer-events-none absolute left-3 top-[52px] z-10 -translate-y-1/2 text-cyan-200">
+                <FieldIcon name="home" />
+              </span>
             </div>
 
-            <div>
+            <div className="relative">
               <label
                 htmlFor="addressLine2"
                 className="mb-2 block text-sm font-medium"
-              >
-                Your address (line 2):
+              >                Your address (line 2):
               </label>
               <input
                 id="addressLine2"
                 name="addressLine2"
                 type="text"
-                className="w-full rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 outline-none ring-cyan-300 transition focus:ring-2"
+                className="persist-focus w-full rounded-xl border border-white/15 bg-slate-900/80 py-3 pl-10 pr-4 outline-none ring-cyan-300 transition focus:ring-2"
                 placeholder="Apartment, suite, etc. (optional)"
               />
+              <span className="pointer-events-none absolute left-3 top-[52px] z-10 -translate-y-1/2 text-cyan-200">
+                <FieldIcon name="building" />
+              </span>
             </div>
 
-            <div className="grid gap-5 md:grid-cols-4">
-              <div>
+            <div className="grid gap-5 md:grid-cols-2">
+              <div className="relative">
                 <label
                   htmlFor="countryCode"
                   className="mb-2 block text-sm font-medium"
-                >
-                  Country
+                >                  Country
                 </label>
                 <select
                   id="countryCode"
                   name="countryCode"
                   required
                   defaultValue=""
-                  className="w-full rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 outline-none ring-cyan-300 transition focus:ring-2"
+                  className="persist-focus w-full rounded-xl border border-white/15 bg-slate-900/80 py-3 pl-10 pr-4 text-sm outline-none ring-cyan-300 transition focus:ring-2"
                 >
-                  <option value="" disabled>
-                    Select country
-                  </option>
+                  <option value="" disabled>Select country</option>
                   {COUNTRY_OPTIONS.map((country) => (
                     <option key={country.code} value={country.code}>
                       {country.name} ({country.code})
                     </option>
                   ))}
                 </select>
+                <span className="pointer-events-none absolute left-3 top-[52px] z-10 -translate-y-1/2 text-cyan-200">
+                  <FieldIcon name="globe" />
+                </span>
                 <p className="mt-2 text-xs text-slate-400">
                   Select your country of residence.
                 </p>
               </div>
 
-              <div>
+              <div className="relative">
                 <label
                   htmlFor="zipCode"
                   className="mb-2 block text-sm font-medium"
-                >
-                  Postal / ZIP Code
+                >                  Postal / ZIP Code
                 </label>
                 <input
                   id="zipCode"
@@ -559,17 +684,19 @@ export default function AuthForm({
                   type="text"
                   required
                   maxLength={15}
-                  className="w-full rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 outline-none ring-cyan-300 transition focus:ring-2"
-                  placeholder="Enter postal code"
+                  className="persist-focus w-full rounded-xl border border-white/15 bg-slate-900/80 py-3 pl-10 pr-4 text-sm outline-none ring-cyan-300 transition focus:ring-2 placeholder:text-slate-500"
+                  placeholder="ZIP / Postal code"
                 />
+                <span className="pointer-events-none absolute left-3 top-[52px] z-10 -translate-y-1/2 text-cyan-200">
+                  <FieldIcon name="mapPin" />
+                </span>
                 <p className="mt-2 text-xs text-slate-400">
                   Format depends on your country.
                 </p>
               </div>
 
-              <div>
-                <label htmlFor="age" className="mb-2 block text-sm font-medium">
-                  Age
+              <div className="relative">
+                <label htmlFor="age" className="mb-2 block text-sm font-medium">                  Age
                 </label>
                 <input
                   id="age"
@@ -578,40 +705,42 @@ export default function AuthForm({
                   required
                   min={13}
                   max={120}
-                  className="w-full rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 outline-none ring-cyan-300 transition focus:ring-2"
+                  className="persist-focus w-full rounded-xl border border-white/15 bg-slate-900/80 py-3 pl-10 pr-4 outline-none ring-cyan-300 transition focus:ring-2"
                   placeholder="18"
                 />
+                <span className="pointer-events-none absolute left-3 top-[52px] z-10 -translate-y-1/2 text-cyan-200">
+                  <FieldIcon name="hash" />
+                </span>
               </div>
 
-              <div>
+              <div className="relative">
                 <label
                   htmlFor="gender"
                   className="mb-2 block text-sm font-medium"
-                >
-                  Gender
+                >                  Gender
                 </label>
                 <select
                   id="gender"
                   name="gender"
                   required
                   defaultValue=""
-                  className="w-full rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 outline-none ring-cyan-300 transition focus:ring-2"
+                  className="persist-focus w-full rounded-xl border border-white/15 bg-slate-900/80 py-3 pl-10 pr-4 text-sm outline-none ring-cyan-300 transition focus:ring-2"
                 >
-                  <option value="" disabled>
-                    Select gender
-                  </option>
+                  <option value="" disabled>Select gender</option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
                 </select>
+                <span className="pointer-events-none absolute left-3 top-[52px] z-10 -translate-y-1/2 text-cyan-200">
+                  <FieldIcon name="user" />
+                </span>
               </div>
             </div>
 
-            <div>
+            <div className="relative">
               <label
                 htmlFor="referralCode"
                 className="mb-2 block text-sm font-medium"
-              >
-                Referral Code (optional)
+              >                Referral Code (optional)
               </label>
               <input
                 id="referralCode"
@@ -619,30 +748,34 @@ export default function AuthForm({
                 type="text"
                 defaultValue={referralCodePrefill}
                 maxLength={24}
-                className="w-full rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 uppercase outline-none ring-cyan-300 transition focus:ring-2"
+                className="persist-focus w-full rounded-xl border border-white/15 bg-slate-900/80 py-3 pl-10 pr-4 uppercase outline-none ring-cyan-300 transition focus:ring-2"
                 placeholder="Enter referral code"
               />
+              <span className="pointer-events-none absolute left-3 top-[52px] z-10 -translate-y-1/2 text-cyan-200">
+                <FieldIcon name="gift" />
+              </span>
             </div>
           </>
         ) : null}
 
-        <div>
-          <label htmlFor="email" className="mb-2 block text-sm font-medium">
-            Email
+        <div className="relative">
+          <label htmlFor="email" className="mb-2 block text-sm font-medium">            Email
           </label>
           <input
             id="email"
             name="email"
             type="email"
             required
-            className="w-full rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 outline-none ring-cyan-300 transition focus:ring-2"
+            className="persist-focus w-full rounded-xl border border-white/15 bg-slate-900/80 py-3 pl-10 pr-4 outline-none ring-cyan-300 transition focus:ring-2"
             placeholder="you@example.com"
           />
+          <span className="pointer-events-none absolute left-3 top-[52px] z-10 -translate-y-1/2 text-cyan-200">
+            <FieldIcon name="mail" />
+          </span>
         </div>
 
-        <div>
-          <label htmlFor="password" className="mb-2 block text-sm font-medium">
-            Password
+        <div className="relative">
+          <label htmlFor="password" className="mb-2 block text-sm font-medium">            Password
           </label>
           <input
             id="password"
@@ -650,9 +783,12 @@ export default function AuthForm({
             type="password"
             required
             minLength={8}
-            className="w-full rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 outline-none ring-cyan-300 transition focus:ring-2"
+            className="persist-focus w-full rounded-xl border border-white/15 bg-slate-900/80 py-3 pl-10 pr-4 outline-none ring-cyan-300 transition focus:ring-2"
             placeholder="Minimum 8 characters"
           />
+          <span className="pointer-events-none absolute left-3 top-[52px] z-10 -translate-y-1/2 text-cyan-200">
+            <FieldIcon name="lock" />
+          </span>
           {mode === "login" ? (
             <div className="mt-3 text-right">
               <Link
@@ -666,12 +802,11 @@ export default function AuthForm({
         </div>
 
         {showConfirmPassword ? (
-          <div>
+          <div className="relative">
             <label
               htmlFor="confirmPassword"
               className="mb-2 block text-sm font-medium"
-            >
-              Confirm Password
+            >              Confirm Password
             </label>
             <input
               id="confirmPassword"
@@ -679,9 +814,12 @@ export default function AuthForm({
               type="password"
               required
               minLength={8}
-              className="w-full rounded-xl border border-white/15 bg-slate-900/80 px-4 py-3 outline-none ring-cyan-300 transition focus:ring-2"
+              className="persist-focus w-full rounded-xl border border-white/15 bg-slate-900/80 py-3 pl-10 pr-4 outline-none ring-cyan-300 transition focus:ring-2"
               placeholder="Repeat your password"
             />
+            <span className="pointer-events-none absolute left-3 top-[52px] z-10 -translate-y-1/2 text-cyan-200">
+              <FieldIcon name="lock" />
+            </span>
           </div>
         ) : null}
 

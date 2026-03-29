@@ -337,19 +337,27 @@ export default function ProfilePage() {
                   </thead>
                   <tbody>
                     {paginatedSurveyHistory.map((item) => {
+                      const normalizedSource = String(item.source || "")
+                        .trim()
+                        .toLowerCase();
                       const normalizedStatusRaw = String(item.status_raw || "")
                         .trim()
                         .toLowerCase();
+                      const isGift = normalizedSource === "survex_bonus";
                       const isReconciliation = normalizedStatusRaw.includes(
                         "reconciliation",
                       );
                       const providerLabel =
-                        String(item.source || "").toLowerCase() === "bitlabs"
+                        normalizedSource === "survex_bonus"
+                          ? "Survex Gift"
+                          : normalizedSource === "bitlabs"
                           ? "BitLabs"
-                          : String(item.source || "").toLowerCase() === "cpx"
+                          : normalizedSource === "cpx"
                             ? "CPX Research"
                             : "TheoremReach";
-                      const statusLabel = isReconciliation
+                      const statusLabel = isGift
+                        ? "Gift"
+                        : isReconciliation
                         ? "Reconciliation"
                         : item.outcome;
 
@@ -361,7 +369,9 @@ export default function ProfilePage() {
                           <td className="py-3 pr-3">
                             <span
                               className={`rounded-full px-2 py-1 text-xs font-bold ${
-                                isReconciliation
+                                isGift
+                                  ? "bg-cyan-500/20 text-cyan-200"
+                                  : isReconciliation
                                   ? "bg-rose-500/20 text-rose-300"
                                   : item.outcome === "Completed"
                                     ? "bg-emerald-500/20 text-emerald-300"

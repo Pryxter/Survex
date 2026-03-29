@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import SiteFooter from "./components/site-footer";
 import type { Metadata } from "next";
+import { UserPlus, ClipboardList, Gift } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -12,16 +13,19 @@ const steps = [
     title: "Create your free account",
     description:
       "Tell us your country and interests so we can send relevant surveys to your inbox.",
+    icon: UserPlus,
   },
   {
     title: "Answer paid surveys",
     description:
       "Complete fast surveys from trusted brands and collect points for each valid response.",
+    icon: ClipboardList,
   },
   {
     title: "Redeem rewards",
     description:
       "Convert your points into PayPal cash or popular gift cards as soon as you reach the threshold.",
+    icon: Gift,
   },
 ];
 
@@ -60,17 +64,20 @@ export default function Home() {
         </div>
 
         <section className="mx-auto max-w-6xl px-6 pb-20 pt-10 md:px-10 md:pb-28">
-          <nav className="mb-14 flex items-center justify-between">
-            <p className="text-xl font-black tracking-tight">
-              SURVEX<span className="text-cyan-300">.app</span>
-            </p>
+            <nav className="mb-14 flex items-center justify-between">
+              <Link
+                href="/"
+                className="cursor-pointer text-xl font-black tracking-tight"
+              >
+                SURV<span className="brand-breathe text-cyan-300">EX</span>
+              </Link>
             <div className="hidden items-center gap-8 text-sm text-slate-300 md:flex">
               <a href="#how-it-works" className="hover:text-white">
                 How it Works
               </a>
-              <a href="#rewards" className="hover:text-white">
+              <Link href="/gifts" className="hover:text-white">
                 Rewards
-              </a>
+              </Link>
               <Link href="/faq" className="hover:text-white">
                 FAQ
               </Link>
@@ -194,9 +201,12 @@ export default function Home() {
                   key={step.title}
                   className="rounded-2xl border border-slate-200 bg-slate-50 p-6"
                 >
-                  <p className="mb-4 text-sm font-black text-cyan-700">
-                    0{index + 1}
-                  </p>
+                  <div className="mb-4 flex items-center justify-between">
+                    <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-200 bg-cyan-50 text-cyan-700">
+                      <step.icon className="h-5 w-5" />
+                    </div>
+                    <p className="text-sm font-black text-cyan-700">0{index + 1}</p>
+                  </div>
                   <h3 className="text-xl font-bold">{step.title}</h3>
                   <p className="mt-3 text-slate-600">{step.description}</p>
                 </article>
