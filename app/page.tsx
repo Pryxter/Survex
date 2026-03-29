@@ -64,13 +64,13 @@ export default function Home() {
         </div>
 
         <section className="mx-auto max-w-6xl px-6 pb-20 pt-10 md:px-10 md:pb-28">
-            <nav className="mb-14 flex items-center justify-between">
-              <Link
-                href="/"
-                className="cursor-pointer text-xl font-black tracking-tight"
-              >
-                SURV<span className="brand-breathe text-cyan-300">EX</span>
-              </Link>
+          <nav className="mb-14 flex items-center justify-between">
+            <Link
+              href="/"
+              className="cursor-pointer text-xl font-black tracking-tight"
+            >
+              SURV<span className="brand-breathe text-cyan-300">EX</span>
+            </Link>
             <div className="hidden items-center gap-8 text-sm text-slate-300 md:flex">
               <a href="#how-it-works" className="hover:text-white">
                 How it Works
@@ -159,7 +159,7 @@ export default function Home() {
               </p>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  "Amazon Gift Card",
+                  "Amazon Gift",
                   "PayPal Cash",
                   "Visa Prepaid",
                   "Bank Transfer",
@@ -205,7 +205,9 @@ export default function Home() {
                     <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-200 bg-cyan-50 text-cyan-700">
                       <step.icon className="h-5 w-5" />
                     </div>
-                    <p className="text-sm font-black text-cyan-700">0{index + 1}</p>
+                    <p className="text-sm font-black text-cyan-700">
+                      0{index + 1}
+                    </p>
                   </div>
                   <h3 className="text-xl font-bold">{step.title}</h3>
                   <p className="mt-3 text-slate-600">{step.description}</p>

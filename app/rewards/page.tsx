@@ -8,7 +8,7 @@ import SiteFooter from "../components/site-footer";
 import { getApiBaseUrl } from "../components/api-base";
 
 const rewardOptions = [
-  "Amazon Gift Card",
+  "Amazon Gift",
   "PayPal Cash",
   "Visa Prepaid",
   "Bank Transfer",
