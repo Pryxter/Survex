@@ -350,6 +350,8 @@ export default function ProfilePage() {
                       const providerLabel =
                         normalizedSource === "survex_bonus"
                           ? "Survex Gift"
+                          : normalizedSource === "adgem"
+                            ? "AdGem"
                           : normalizedSource === "bitlabs"
                           ? "BitLabs"
                           : normalizedSource === "cpx"

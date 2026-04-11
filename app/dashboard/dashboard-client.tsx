@@ -10,10 +10,10 @@ import { getApiBaseUrl } from "../components/api-base";
 
 const surveyWalls = [
   {
-    name: "CPX Research",
-    image: "/survey-walls/cpx-research.svg",
-    alt: "CPX Research visual",
-    href: "/CPX",
+    name: "AdGem",
+    image: "/survey-walls/adgem.svg",
+    alt: "AdGem visual",
+    href: "/adgem",
   },
   {
     name: "TheoremReach",
