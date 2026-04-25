@@ -1126,6 +1126,8 @@ export default function AdminPage() {
                           ? "Survex Gift"
                           : normalizedSource === "adgem"
                             ? "AdGem"
+                          : normalizedSource === "tapresearch"
+                            ? "TapResearch"
                           : normalizedSource === "bitlabs"
                           ? "BitLabs"
                           : normalizedSource === "cpx"

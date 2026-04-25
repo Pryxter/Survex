@@ -352,6 +352,8 @@ export default function ProfilePage() {
                           ? "Survex Gift"
                           : normalizedSource === "adgem"
                             ? "AdGem"
+                          : normalizedSource === "tapresearch"
+                            ? "TapResearch"
                           : normalizedSource === "bitlabs"
                           ? "BitLabs"
                           : normalizedSource === "cpx"

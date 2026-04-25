@@ -22,6 +22,12 @@ const surveyWalls = [
     href: "/TheoremReach",
   },
   {
+    name: "TapResearch",
+    image: "/survey-walls/tapresearch.svg",
+    alt: "TapResearch visual",
+    href: "/tapresearch",
+  },
+  {
     name: "InBrain.ai",
     image: "/survey-walls/Inbrain.svg",
     alt: "InBrain.ai visual",
