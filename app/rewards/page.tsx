@@ -9,7 +9,7 @@ import { getApiBaseUrl } from "../components/api-base";
 
 const rewardOptions = [
   "Amazon Gift",
-  "PayPal Cash",
+  "PayPal",
   "Visa Prepaid",
   "Bank Transfer",
   "DoorDash",

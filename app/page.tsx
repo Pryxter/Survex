@@ -24,7 +24,7 @@ const steps = [
   {
     title: "Redeem rewards",
     description:
-      "Convert your points into PayPal cash or popular gift cards as soon as you reach the threshold.",
+      "Convert your points into PayPal or popular gift cards as soon as you reach the threshold.",
     icon: Gift,
   },
 ];
@@ -45,7 +45,7 @@ const faqs = [
   {
     question: "How do I get paid?",
     answer:
-      "Once you reach the minimum points, you can request PayPal cash or gift cards from available partners.",
+      "Once you reach the minimum points, you can request PayPal or gift cards from available partners.",
   },
   {
     question: "How often will I receive surveys?",
@@ -158,26 +158,23 @@ export default function Home() {
                 Popular Rewards
               </p>
               <div className="grid grid-cols-2 gap-3">
-                {[
-                  "Amazon Gift",
-                  "PayPal Cash",
-                  "Visa Prepaid",
-                  "Bank Transfer",
-                ].map((reward) => (
-                  <div
-                    key={reward}
-                    className="rounded-2xl border border-white/10 bg-slate-900/70 px-4 py-6 text-center text-sm font-semibold"
-                  >
-                    <Image
-                      src={`/rewards/${reward}.png`}
-                      alt={reward}
-                      width={220}
-                      height={120}
-                      className="mx-auto h-auto w-full max-w-[170px]"
-                    />
-                    {/* {reward} */}
-                  </div>
-                ))}
+                {["Amazon Gift", "PayPal", "Visa Prepaid", "Bank Transfer"].map(
+                  (reward) => (
+                    <div
+                      key={reward}
+                      className="rounded-2xl border border-white/10 bg-slate-900/70 px-4 py-6 text-center text-sm font-semibold"
+                    >
+                      <Image
+                        src={`/rewards/${reward}.png`}
+                        alt={reward}
+                        width={220}
+                        height={120}
+                        className="mx-auto h-auto w-full max-w-[170px]"
+                      />
+                      {/* {reward} */}
+                    </div>
+                  ),
+                )}
               </div>
               <p className="mt-5 text-sm text-slate-300">
                 Complete surveys, collect points, and redeem your rewards

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 const giftMethods = [
   "Amazon Gift Card",
-  "PayPal Cash",
+  "PayPal",
   "Visa Prepaid",
   "Bank Transfer",
   "DoorDash",
@@ -26,7 +26,10 @@ export default function GiftsPage() {
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <main className="mx-auto w-full max-w-6xl px-6 py-10 md:px-10">
         <nav className="mb-10 flex items-center justify-between">
-          <Link href="/" className="cursor-pointer text-xl font-black tracking-tight">
+          <Link
+            href="/"
+            className="cursor-pointer text-xl font-black tracking-tight"
+          >
             SURV<span className="brand-breathe text-cyan-300">EX</span>
           </Link>
           <div className="hidden items-center gap-8 text-sm text-slate-300 md:flex">
@@ -114,4 +117,3 @@ export default function GiftsPage() {
     </div>
   );
 }
-

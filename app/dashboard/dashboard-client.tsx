@@ -10,28 +10,16 @@ import { getApiBaseUrl } from "../components/api-base";
 
 const surveyWalls = [
   {
-    name: "AdGem",
-    image: "/survey-walls/adgem.svg",
-    alt: "AdGem visual",
-    href: "/adgem",
+    name: "CPX Research",
+    image: "/survey-walls/cpx-research.svg",
+    alt: "CPX Research visual",
+    href: "/CPX",
   },
   {
     name: "TheoremReach",
     image: "/survey-walls/theoremreach.svg",
     alt: "TheoremReach visual",
     href: "/TheoremReach",
-  },
-  {
-    name: "TapResearch",
-    image: "/survey-walls/tapresearch.svg",
-    alt: "TapResearch visual",
-    href: "/tapresearch",
-  },
-  {
-    name: "InBrain.ai",
-    image: "/survey-walls/Inbrain.svg",
-    alt: "InBrain.ai visual",
-    href: "/InBrain",
   },
 ];
 
@@ -236,42 +224,42 @@ export default function DashboardClient() {
               your balance.
             </p>
 
-            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:mx-auto lg:max-w-4xl lg:gap-4">
               {surveyWalls.map((wall) =>
                 wall.href ? (
                   <Link
                     key={wall.name}
                     href={wall.href}
-                    className="rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:border-cyan-300/60"
+                    className="group rounded-2xl border border-white/10 bg-white/[0.04] p-4 shadow-lg shadow-slate-950/20 transition duration-200 hover:-translate-y-0.5 hover:border-cyan-300/60 hover:bg-white/[0.07] hover:shadow-cyan-950/30 lg:rounded-xl lg:p-3"
                   >
-                    <div className="overflow-hidden rounded-xl border border-white/10 bg-slate-800/70">
+                    <div className="overflow-hidden rounded-xl border border-white/10 bg-slate-800/70 ring-1 ring-white/[0.03] lg:rounded-lg">
                       <Image
                         src={wall.image}
                         alt={wall.alt}
                         width={640}
                         height={360}
-                        className="h-28 w-full object-cover"
+                        className="h-28 w-full object-cover transition duration-200 group-hover:scale-[1.015] lg:h-24"
                       />
                     </div>
-                    <p className="mt-3 text-center text-base font-bold">
+                    <p className="mt-3 text-center text-base font-bold lg:mt-2 lg:text-sm">
                       {wall.name}
                     </p>
                   </Link>
                 ) : (
                   <article
                     key={wall.name}
-                    className="rounded-2xl border border-white/10 bg-white/5 p-4"
+                    className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 shadow-lg shadow-slate-950/20 lg:rounded-xl lg:p-3"
                   >
-                    <div className="overflow-hidden rounded-xl border border-white/10 bg-slate-800/70">
+                    <div className="overflow-hidden rounded-xl border border-white/10 bg-slate-800/70 ring-1 ring-white/[0.03] lg:rounded-lg">
                       <Image
                         src={wall.image}
                         alt={wall.alt}
                         width={640}
                         height={360}
-                        className="h-28 w-full object-cover"
+                        className="h-28 w-full object-cover lg:h-24"
                       />
                     </div>
-                    <p className="mt-3 text-center text-base font-bold">
+                    <p className="mt-3 text-center text-base font-bold lg:mt-2 lg:text-sm">
                       {wall.name}
                     </p>
                   </article>
